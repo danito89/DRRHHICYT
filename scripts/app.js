@@ -24,7 +24,7 @@ const unmark = (el) =>
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // -----------------------------------------------------------------------------
-// realizado por ChatGPT: helper para detectar si un nodo ES o ESTÁ dentro de un .chip
+// Helper para detectar si un nodo ES o ESTÁ dentro de un .chip
 // -----------------------------------------------------------------------------
 const isChip = (node) =>
   !!(node && (node.classList?.contains('chip') || node.closest?.('.chip')));
@@ -37,7 +37,7 @@ const highlight = (el, term) => {
   unmark(el);
   if(!term) return;
 
-  // realizado por ChatGPT: no resaltar dentro de chips para evitar cortes visuales
+  // No resaltar dentro de chips para evitar cortes visuales
   if (isChip(el)) return;
 
   // --- NUEVO: resaltar TODAS las coincidencias (global/case-insensitive) y
@@ -168,11 +168,11 @@ if (q) {
       if (show) {
         visibleCount++;
         // Resaltado dentro del elemento visible
-        // realizado por ChatGPT: evitar resaltar en chips
+        // Evitar resaltar en chips
         if (!isChip(el)) highlight(el, term);
 
         // Guardamos en "hits" para scroll/flash si coincide directamente o por sección
-        // realizado por ChatGPT: no usar chips como "primer hit"
+        // No usar chips como "primer hit"
         if ((showSelf || showBySection) && !isChip(el)) hits.push(el);
 
         // Apertura automática de <details> cuando la sección matchea
@@ -199,10 +199,10 @@ if (q) {
     // --- (4) Scroll suave y flash al primer resultado relevante ---
     if (term && hits.length) {
       const first = hits[0];
-      const card = first.closest('section.card') || first; // realizado por ChatGPT
+      const card = first.closest('section.card') || first; //
       if (card && typeof card.scrollIntoView === 'function') {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        card.classList.add('hit-flash'); // realizado por ChatGPT
+        card.classList.add('hit-flash'); //
         setTimeout(() => card.classList.remove('hit-flash'), 1200);
       }
     }
@@ -269,4 +269,11 @@ anchors.forEach(a => {
     a.setAttribute('target','_blank');
     a.setAttribute('rel','noopener noreferrer');
   }
+});
+
+// ============================================================
+// Efecto de blur/sombra al scrollear (NO SE SI FUNCIONA)
+// ============================================================
+window.addEventListener('scroll', () => {
+  document.body.classList.toggle('scrolled', window.scrollY > 50);
 });

@@ -1,23 +1,22 @@
 /* =========================================================
    TEMA / VARIABLES (custom properties)
-   - Variables para colores, radios y sombras.
-   - Bootstrap va primero; este archivo overridea detalles visuales.
    ========================================================= */
 :root{
-  --header-h: 100px;
+  --header-h: 125px;       /* Altura fija del header */
+  --search-h: 56px;        /* Altura del buscador */
 
   /* Paleta */
-  --bg:#232D4F;          /* Fondo general del sitio */
-  --panel:#ffffff;       /* Paneles (aside / offcanvas / cards) */
-  --card:#ffffff;        /* Tarjetas/secciones */
-  --muted:#080808;       /* Texto secundario */
-  --text:#0f172a;        /* Texto principal */
-  --brand:#0b6bbf;       /* Azul institucional - Botones link de interes */
-  --brand-600:#095a9f;   /* Hover del azul */
+  --bg:#232D4F;
+  --panel:#ffffff;
+  --card:#ffffff;
+  --muted:#080808;
+  --text:#0f172a;
+  --brand:#0b6bbf;
+  --brand-600:#095a9f;
 
   /* Utilidades */
-  --ok:#157347;          
-  --warn:#b08900;        
+  --ok:#157347;
+  --warn:#b08900;
   --shadow: 0 4px 16px rgba(15,23,42,.06);
   --radius: 14px;
   --border-color: rgba(15,23,42,.08);
@@ -30,17 +29,14 @@ html, body{ height:100% }
 body{
   background: var(--bg);
   color: var(--text);
-  padding-top: var(--header-h); /* Compensa el header fijo */
+  padding-top: var(--header-h);
 }
 
-/* Contenedor "wrap" para ancho máximo consistente con Bootstrap */
 .wrap{
   max-width:1200px;
   margin:0 auto;
   padding:32px 24px;
 }
-
-/* La clase .grid ahora solo agrega margen: el layout lo maneja Bootstrap (.row/.col-*) */
 .grid{ margin-top:22px }
 
 /* =========================================================
@@ -48,58 +44,63 @@ body{
    ========================================================= */
 header{
   display:flex; align-items:center;
-  padding:0px 0;
-  background:#232D4F;            /* Podrías usar var(--bg) si querés un solo punto de cambio */
+  background:#232D4F;
   border-bottom:1px solid var(--border-color);
-  /*box-shadow:0 4px 12px rgba(0,0,0,.05);*/
   position:fixed; top:0; left:0; width:100%; z-index:100;
-  font-family: "Lora", serif;    /* Si querés usar Lora, importala en el <head> */
+  font-family:"Lora", serif;
 }
-header h1{ margin:0; font-weight:700; color:#fff; text-align:left; font-size:clamp(20px,3vw,28px) }
-.muted{ color:var(--muted) }
+header h1{ margin:0; font-weight:700; color:#fff; font-size:clamp(20px,3vw,28px) }
 .brand{ display:flex; align-items:center; gap:12px }
 .brand img {
-  width:75px;               /* antes 42px */
-  height:75px;              /* mantiene proporción cuadrada */
-  border-radius:12px;       /* leve ajuste visual */
-  object-fit:cover;
-  /*border:1px solid rgba(255,255,255,.25);*/ /* más claro, combina con header oscuro */
-  /*box-shadow:0 2px 6px rgba(0,0,0,0.15); */ /* leve relieve */
+  width:75px; height:75px; border-radius:12px; object-fit:cover;
   transition: transform .2s ease-in-out;
 }
-
-header h2.subtitle {
-  font-size: 1rem;                /* tamaño moderado */
-  font-weight: 400;               /* más liviano que el h1 */
-  color: rgba(255,255,255,.85);   /* blanco suave */
-  margin: 2px 0 0 0;              /* elimina espacio extra */
-  font-family: system-ui, sans-serif; /* mantiene coherencia visual */
+.brand img:hover { transform: scale(1.05); }
+header h2.subtitle{
+  font-size:1rem; font-weight:400; color:rgba(255,255,255,.85);
+  margin:2px 0 0 0; font-family:system-ui, sans-serif;
 }
-
-.brand img:hover {
-  transform: scale(1.05);   /* efecto sutil al pasar el mouse */
-}
-
 
 /* =========================================================
-   ASIDE / TOC (desktop) y OFFCANVAS (mobile)
+   ASIDE FIJO — BLOQUE ÚNICO
    ========================================================= */
-/* Lista índice (comparten estilos el aside y el offcanvas) */
+@media (min-width: 768px){
+  .wrap { position: relative; }
+
+  aside.col-md-4.col-lg-3{
+    position: fixed;
+    top: calc(var(--header-h) + var(--search-h) + 0px);
+    left: calc((100vw - min(100vw, 1200px))/2 + 24px);
+    width: 280px;
+    max-height: calc(100vh - var(--header-h) - var(--search-h) - 30px);
+    overflow-y: auto;
+    z-index: 1;
+  }
+
+  main.col-12.col-md-8.col-lg-9{
+    margin-left: calc(300px + 30px);
+  }
+}
+
+@media (min-width: 992px){
+  aside.col-md-4.col-lg-3{ width: 300px; }
+  main.col-12.col-md-8.col-lg-9{ margin-left: calc(300px + 24px); }
+}
+
+/* =========================================================
+   ASIDE / TOC
+   ========================================================= */
 .toc{ list-style:none; padding:0; margin:0 }
 .toc li{ margin:.25rem 0 }
 .toc a{
   color:var(--text); text-decoration:none; display:block;
-  padding:.4rem .55rem; border-radius:10px
+  padding:.4rem .55rem; border-radius:10px;
 }
-.toc a:hover, .toc a:focus{ background:rgba(11,107,191,.08); outline:none }
-.toc a:focus-visible{ outline:2px solid var(--brand); outline-offset:2px }
-
-/* Offcanvas: asegura fondo y bordes alineados a tema */
+.toc a:hover, .toc a:focus{ background:rgba(11,107,191,.08); }
 .offcanvas{ background:var(--panel) }
-.offcanvas .offcanvas-title{ color:var(--text) }
 
 /* =========================================================
-   TARJETAS (aprovecha .card de Bootstrap y afina tema)
+   TARJETAS
    ========================================================= */
 .card{
   background:var(--card);
@@ -111,44 +112,40 @@ header h2.subtitle {
 .card h2, .card .h5{ color:#0b2a49 }
 
 /* =========================================================
-   BUSCADOR (usa .input-group de Bootstrap, solo afina detalles)
+   BUSCADOR
    ========================================================= */
 .search .input-group-text{ background:#fff; border:1px solid var(--border-color) }
 .search .form-control{
   border:1px solid var(--border-color);
-  border-left:0;               /* se une visualmente al icono */
+  border-left:0;
   background:#fff; color:var(--text);
 }
 .search .form-control::placeholder{ color:var(--muted) }
 
 /* =========================================================
-   LINKS DE INTERÉS (chips)
-   - El HTML usa <a class="btn btn-light w-100"> dentro de .chip
-   - Acá solo da el look "pastilla" y el hover con leve elevación.
+   LINKS DE INTERÉS
    ========================================================= */
 .links{ margin:6px 0 }
 .chip a.btn{
   display:flex; align-items:center; justify-content:center; gap:8px;
-  padding:14px 16px; border-radius:12px; letter-spacing:.2px; font-weight:600;
-  background: linear-gradient(180deg, #ffffff, #f9fafc);
+  padding:14px 16px; border-radius:12px; font-weight:600;
+  background:linear-gradient(180deg,#fff,#f9fafc);
   border:1px solid rgba(148,163,184,.25);
   box-shadow:0 2px 4px rgba(0,0,0,.04);
-  color: var(--brand);
-  transition: all .25s ease;
+  color:var(--brand);
+  transition:all .25s ease;
 }
 .chip a.btn:hover{
-  background: linear-gradient(180deg, #f0f7ff, #e8f2ff);
-  border-color: rgba(96,165,250,.6);
-  transform: translateY(-2px);
+  background:linear-gradient(180deg,#f0f7ff,#e8f2ff);
+  border-color:rgba(96,165,250,.6);
+  transform:translateY(-2px);
   box-shadow:0 4px 10px rgba(11,107,191,.15);
-  color: var(--brand-600);
+  color:var(--brand-600);
 }
-.chip a.btn:focus-visible{ outline:2px solid var(--brand); outline-offset:2px }
-/* Iconito opcional antes del texto */
 .chip a.btn::before{ content:"🔗"; font-size:1rem; opacity:.7 }
 
 /* =========================================================
-   FAQ con <details>/<summary>
+   FAQ
    ========================================================= */
 details.faq{
   border:1px solid var(--border-color);
@@ -157,23 +154,15 @@ details.faq{
   background:#ffffff;
   transition:border-color .2s;
 }
-details.faq:not([open]) summary{ list-style:none } /* oculta viñeta default cerrada */
 details.faq[open]{ border-color:#7bb5e6 }
-summary{
-  cursor:pointer; font-weight:650;
-  display:flex; align-items:center; gap:10px;
-}
-summary .tag{ font-size:.82rem; color:var(--muted); font-weight:500 }
-summary:focus-visible{ outline:2px solid var(--brand); outline-offset:4px }
+summary{ cursor:pointer; font-weight:650; display:flex; align-items:center; gap:10px; }
 .faq .content{ margin-top:10px; color:var(--text) }
 
 /* =========================================================
    CONTACTOS
    ========================================================= */
 .contacts{ display:grid; grid-template-columns:1fr; gap:10px }
-.contact{
-  padding:10px 12px; border:1px solid var(--border-color); border-radius:12px; background:#fff;
-}
+.contact{ padding:10px 12px; border:1px solid var(--border-color); border-radius:12px; background:#fff; }
 .contact strong{ display:block }
 
 /* =========================================================
@@ -182,107 +171,62 @@ summary:focus-visible{ outline:2px solid var(--brand); outline-offset:4px }
 .note{
   display:block; margin:12px 0 0 0; padding:10px 14px;
   background:#fff8db; border:1px solid #f3e39f; color:#705e00;
-  border-radius:8px; font-size:.95rem; line-height:1.5;
-  box-shadow:0 2px 6px rgba(0,0,0,.05)
+  border-radius:8px; font-size:.95rem;
 }
-.note::before{ content:"💡 "; font-size:1rem }
 
 /* =========================================================
    REDES SOCIALES
-   - Usa botones Bootstrap + clases por marca (.x, .instagram, .youtube, .linkedin)
-   - Íconos via Bootstrap Icons (heredan color actual)
    ========================================================= */
 .social-links{ display:grid; gap:8px }
 .social-links a{
-  border-radius:999px; font-weight:600; text-decoration:none;
+  border-radius:999px; font-weight:600;
   display:flex; align-items:center; justify-content:center; gap:8px;
-  transition: all .25s ease-in-out;
+  transition:all .25s ease-in-out;
   padding:10px 14px; font-size:.95rem;
 }
-
-/* X (ex Twitter) */
 .social-links a.x{ background:#000; color:#fff }
-.social-links a.x:hover{ background:#2a2a2a }
-
-/* Instagram: degradado oficial + icono blanco + hover glow */
 .social-links a.instagram{
-  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%);
   color:#fff;
 }
-.social-links a.instagram:hover{ filter:brightness(1.12) }
-
-/* YouTube: rojo con degradado leve para volumen */
-.social-links a.youtube{
-  background: linear-gradient(90deg,#ff0000 0%, #c40000 100%);
-  color:#fff;
-}
-.social-links a.youtube:hover{ filter:brightness(1.12) }
-
-/* LinkedIn: azul corporativo */
+.social-links a.youtube{ background:linear-gradient(90deg,#ff0000 0%,#c40000 100%); color:#fff }
 .social-links a.linkedin{ background:#0077b5; color:#fff }
-.social-links a.linkedin:hover{ background:#046293 }
 
-/* Íconos blancos y animación sutil al hover */
-.social-links a svg, .social-links a i{ width:18px; height:18px }
-.social-links a svg path{ fill:#fff }
-.social-links a:hover i{ transform: scale(1.12) }
-
-/* Social links en 2 columnas desde pantallas medianas */
-@media (min-width: 768px){
-  .social-links{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
+/* =========================================================
+   ANCLAS + HEADER FIJO
+   ========================================================= */
+section[id], .card, details.faq{
+  scroll-margin-top: calc(var(--header-h) + var(--search-h) + 20px);
 }
 
-/* =========================================================
-   ENLACES / CÓDIGO
-   ========================================================= */
-a{ color:var(--brand) }
-a:hover{ color:var(--brand-600) }
-a:focus-visible{ outline:2px solid var(--brand); outline-offset:2px }
-
-code{
-  background:#f3f6fb; border:1px solid var(--border-color);
-  padding:.1rem .35rem; border-radius:6px; color:#0b2a49
-}
 
 /* =========================================================
-   ANCLAS + HEADER FIJO (scroll con margen)
-   ========================================================= */
-section[id], .card, details.faq{ scroll-margin-top: calc(var(--header-h) + 12px) }
-
-/* =========================================================
-   RESALTADO DE BÚSQUEDA (para <mark class="__hl"> generado por app.js)
+   RESALTADO DE BÚSQUEDA
    ========================================================= */
 mark.__hl{
   background:#fff3c4; outline:1px solid rgba(255,193,7,.35);
   padding:0 .15em; border-radius:3px;
 }
-
-/* Flash al primer resultado */
-/* realizado por ChatGPT: mover fuera de mark.__hl y dejar una sola definición */
-.hit-flash{ animation: hit-flash 1.2s ease-out } /* realizado por ChatGPT */
-@keyframes hit-flash{                              /* realizado por ChatGPT */
-  0%{   box-shadow:0 0 0 0 rgba(11,107,191,.45) }
-  50%{  box-shadow:0 0 0 8px rgba(11,107,191,.18) }
-  100%{ box-shadow:0 0 0 0 rgba(11,107,191,0) }
+.hit-flash{ animation: hit-flash 1.2s ease-out }
+@keyframes hit-flash{
+  0%{box-shadow:0 0 0 0 rgba(11,107,191,.45)}
+  50%{box-shadow:0 0 0 8px rgba(11,107,191,.18)}
+  100%{box-shadow:0 0 0 0 rgba(11,107,191,0)}
 }
 
 /* =========================================================
-   ACCESIBILIDAD / PREFERENCIAS
+   EFECTO VISUAL: sombra y blur al scrollear (NO SE SI FUNCIONA)
    ========================================================= */
-@media (prefers-reduced-motion: reduce){
-  *{ animation:none !important; transition:none !important; scroll-behavior:auto !important }
-}
+@media (min-width: 768px) {
+  aside.col-md-4.col-lg-3 {
+    transition: box-shadow .3s ease, backdrop-filter .3s ease;
+  }
 
-/* =========================================================
-   RESPONSIVE / PRINT
-   ========================================================= */
-@media print{
-  body{ background:#fff !important; color:#000; padding-top:0 }
-  header, .offcanvas, .search, .social-links{ display:none !important }
-  .wrap{ max-width:none; padding:0 }
-  a{ color:#000; text-decoration:underline }
+  body.scrolled aside.col-md-4.col-lg-3 {
+    box-shadow: 0 4px 20px rgba(0,0,0,.12);
+    backdrop-filter: blur(3px);
+  }
 }
+/* =========================================================
+   FIN DEL CSS
+   ========================================================= */
