@@ -17,6 +17,12 @@ const unmark = (el) =>
     m.replaceWith(document.createTextNode(m.textContent))
   );
 
+// -----------------------------------------------------------------------------
+// Utilidad adicional: escapar caracteres especiales de RegExp para buscar texto
+// literalmente (p. ej., términos con +, *, ?, ., etc.)
+// -----------------------------------------------------------------------------
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Resalta la primera aparición de `term` dentro de todos los nodos de texto de `el`
 // - Usa TreeWalker para iterar sólo nodos de texto.
 // - Reemplaza el nodo de texto por un fragmento con <mark> alrededor del match.
@@ -25,33 +31,51 @@ const highlight = (el, term) => {
   unmark(el);
   if(!term) return;
 
+  // --- NUEVO: resaltar TODAS las coincidencias (global/case-insensitive) y
+  //            manejar caracteres especiales en el término de búsqueda.
+  const safe = escapeRegExp(term);
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
   const parts = [];
   while (walker.nextNode()) parts.push(walker.currentNode);
 
   parts.forEach(node => {
     const t = node.textContent;
-    const i = t.toLowerCase().indexOf(term);
+    if (!t.trim().length) return;
 
-    // Sólo resaltar si hay coincidencia y el texto no es puro whitespace
-    if(i > -1 && t.trim().length){
-      // Particiona el texto en antes / match / después
-      const before = t.slice(0, i);
-      const mid    = t.slice(i, i + term.length);
-      const after  = t.slice(i + term.length);
+    // Usamos una RegExp nueva por nodo para evitar problemas con lastIndex
+    const regex = new RegExp(safe, 'gi');
+    let match;
+    let lastIndex = 0;
+    let found = false;
 
-      // Crea un fragmento con el texto antes, el <mark> y el texto después
-      const frag = document.createDocumentFragment();
-      if (before) frag.appendChild(document.createTextNode(before));
+    const frag = document.createDocumentFragment();
 
+    while ((match = regex.exec(t)) !== null) {
+      found = true;
+      const start = match.index;
+      const end = start + match[0].length;
+
+      // Texto antes del match
+      if (start > lastIndex) {
+        frag.appendChild(document.createTextNode(t.slice(lastIndex, start)));
+      }
+
+      // Span marcado
       const m = document.createElement('mark');
       m.className = '__hl';
-      m.textContent = mid;
+      m.textContent = t.slice(start, end);
       frag.appendChild(m);
 
-      if (after) frag.appendChild(document.createTextNode(after));
+      lastIndex = end;
+      // En RegExp global con textos vacíos, evitar loops infinitos
+      if (regex.lastIndex === match.index) regex.lastIndex++;
+    }
 
-      // Reemplaza el nodo de texto original por el fragmento resaltado
+    if (found) {
+      // Resto del texto después del último match
+      if (lastIndex < t.length) {
+        frag.appendChild(document.createTextNode(t.slice(lastIndex)));
+      }
       node.replaceWith(frag);
     }
   });
