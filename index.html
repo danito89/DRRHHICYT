@@ -32,7 +32,18 @@
               <h2 class="subtitle">Dirección de Recursos Humanos — Preguntas Frecuentes y Trámites</h2>
             </div>
       </div>
+              <!-- Buscador (Bootstrap input-group) mantiene id="#q" para app.js -->
+        <div class="search mb-2">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input id="q" type="search" class="form-control"
+                   placeholder="Escribí para filtrar preguntas, trámites o correos…"
+                   aria-label="Buscar en la página" />
+          </div>
+        </div>
+
     </div>
+    
   </header>
 
   <!-- Contenedor principal (usa Bootstrap grid + .wrap para max-width) -->
@@ -79,15 +90,6 @@
 
       <!-- ===== Main content ===== -->
       <main class="col-12 col-md-8 col-lg-9">
-        <!-- Buscador (Bootstrap input-group) mantiene id="#q" para app.js -->
-        <div class="search mb-2">
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input id="q" type="search" class="form-control"
-                   placeholder="Escribí para filtrar preguntas, trámites o correos…"
-                   aria-label="Buscar en la página" />
-          </div>
-        </div>
 
         <!-- ===================== Links de interés ===================== -->
         <section id="links" class="card mb-3">

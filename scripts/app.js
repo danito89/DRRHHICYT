@@ -23,6 +23,12 @@ const unmark = (el) =>
 // -----------------------------------------------------------------------------
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+// -----------------------------------------------------------------------------
+// realizado por ChatGPT: helper para detectar si un nodo ES o ESTÁ dentro de un .chip
+// -----------------------------------------------------------------------------
+const isChip = (node) =>
+  !!(node && (node.classList?.contains('chip') || node.closest?.('.chip')));
+
 // Resalta la primera aparición de `term` dentro de todos los nodos de texto de `el`
 // - Usa TreeWalker para iterar sólo nodos de texto.
 // - Reemplaza el nodo de texto por un fragmento con <mark> alrededor del match.
@@ -30,6 +36,9 @@ const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const highlight = (el, term) => {
   unmark(el);
   if(!term) return;
+
+  // realizado por ChatGPT: no resaltar dentro de chips para evitar cortes visuales
+  if (isChip(el)) return;
 
   // --- NUEVO: resaltar TODAS las coincidencias (global/case-insensitive) y
   //            manejar caracteres especiales en el término de búsqueda.
@@ -159,10 +168,12 @@ if (q) {
       if (show) {
         visibleCount++;
         // Resaltado dentro del elemento visible
-        highlight(el, term);
+        // realizado por ChatGPT: evitar resaltar en chips
+        if (!isChip(el)) highlight(el, term);
 
         // Guardamos en "hits" para scroll/flash si coincide directamente o por sección
-        if (showSelf || showBySection) hits.push(el);
+        // realizado por ChatGPT: no usar chips como "primer hit"
+        if ((showSelf || showBySection) && !isChip(el)) hits.push(el);
 
         // Apertura automática de <details> cuando la sección matchea
         if (showBySection && el.tagName === 'DETAILS') el.open = true;
@@ -188,10 +199,11 @@ if (q) {
     // --- (4) Scroll suave y flash al primer resultado relevante ---
     if (term && hits.length) {
       const first = hits[0];
-      if (first && typeof first.scrollIntoView === 'function') {
-        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        first.classList.add('hit-flash');                 // clase CSS para "destello"
-        setTimeout(() => first.classList.remove('hit-flash'), 1200);
+      const card = first.closest('section.card') || first; // realizado por ChatGPT
+      if (card && typeof card.scrollIntoView === 'function') {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('hit-flash'); // realizado por ChatGPT
+        setTimeout(() => card.classList.remove('hit-flash'), 1200);
       }
     }
 

@@ -262,8 +262,9 @@ mark.__hl{
 }
 
 /* Flash al primer resultado */
-.hit-flash{ animation: hit-flash 1.2s ease-out }
-@keyframes hit-flash{
+/* realizado por ChatGPT: mover fuera de mark.__hl y dejar una sola definición */
+.hit-flash{ animation: hit-flash 1.2s ease-out } /* realizado por ChatGPT */
+@keyframes hit-flash{                              /* realizado por ChatGPT */
   0%{   box-shadow:0 0 0 0 rgba(11,107,191,.45) }
   50%{  box-shadow:0 0 0 8px rgba(11,107,191,.18) }
   100%{ box-shadow:0 0 0 0 rgba(11,107,191,0) }
