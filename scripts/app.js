@@ -9,7 +9,11 @@ const q = document.getElementById('q');
 const items = () => Array.from(document.querySelectorAll('.faq-item, .contact, .chip'));
 
 // Chequeo rápido: ¿el texto del elemento contiene el término?
-const matches = (el, term) => el.textContent.toLowerCase().includes(term);
+// (ahora progresivo: substring case-insensitive para que "arre" matchee "Arredondo")
+const matches = (el, term) => {
+  if (!term) return true;
+  return el.textContent.toLowerCase().includes(term);
+};
 
 // Quita marcas <mark> previas (de resaltados anteriores) dentro de un elemento
 const unmark = (el) =>
@@ -29,65 +33,26 @@ const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const isChip = (node) =>
   !!(node && (node.classList?.contains('chip') || node.closest?.('.chip')));
 
+// -----------------------------------------------------------------------------
+// Utilidad: construir RegExp consistente para búsqueda (sin resaltado)
+// - Palabra completa si el término tiene 3+ caracteres y no contiene espacios.
+// - Case-insensitive y global para encontrar todas las apariciones.
+// -----------------------------------------------------------------------------
+const buildSearchRegex = (term) => {
+  const safe = escapeRegExp(term);
+  const wholeWord = term.length >= 3 && !/\s/.test(term);
+  const pattern = wholeWord ? `\\b${safe}\\b` : safe;
+  return new RegExp(pattern, 'gi');
+};
+
 // Resalta la primera aparición de `term` dentro de todos los nodos de texto de `el`
 // - Usa TreeWalker para iterar sólo nodos de texto.
 // - Reemplaza el nodo de texto por un fragmento con <mark> alrededor del match.
 // - Si `term` está vacío, no hace nada (y previamente se limpió con unmark()).
 const highlight = (el, term) => {
+  // ⚠️ DESACTIVADO: no se aplican marcas; solo nos aseguramos de limpiar cualquier resto.
   unmark(el);
-  if(!term) return;
-
-  // No resaltar dentro de chips para evitar cortes visuales
-  if (isChip(el)) return;
-
-  // --- NUEVO: resaltar TODAS las coincidencias (global/case-insensitive) y
-  //            manejar caracteres especiales en el término de búsqueda.
-  const safe = escapeRegExp(term);
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
-  const parts = [];
-  while (walker.nextNode()) parts.push(walker.currentNode);
-
-  parts.forEach(node => {
-    const t = node.textContent;
-    if (!t.trim().length) return;
-
-    // Usamos una RegExp nueva por nodo para evitar problemas con lastIndex
-    const regex = new RegExp(safe, 'gi');
-    let match;
-    let lastIndex = 0;
-    let found = false;
-
-    const frag = document.createDocumentFragment();
-
-    while ((match = regex.exec(t)) !== null) {
-      found = true;
-      const start = match.index;
-      const end = start + match[0].length;
-
-      // Texto antes del match
-      if (start > lastIndex) {
-        frag.appendChild(document.createTextNode(t.slice(lastIndex, start)));
-      }
-
-      // Span marcado
-      const m = document.createElement('mark');
-      m.className = '__hl';
-      m.textContent = t.slice(start, end);
-      frag.appendChild(m);
-
-      lastIndex = end;
-      // En RegExp global con textos vacíos, evitar loops infinitos
-      if (regex.lastIndex === match.index) regex.lastIndex++;
-    }
-
-    if (found) {
-      // Resto del texto después del último match
-      if (lastIndex < t.length) {
-        frag.appendChild(document.createTextNode(t.slice(lastIndex)));
-      }
-      node.replaceWith(frag);
-    }
-  });
+  return;
 };
 
 // ============================================================================
@@ -145,6 +110,7 @@ if (q) {
       sectionMatchMap.set(sec, matched);
 
       // Resaltar en el título si hace match; si no, limpiarlo
+      // (highlight desactivado; se mantiene la llamada por estructura)
       if (matched) {
         highlight(h2, term);
       } else if (h2) {
@@ -158,6 +124,13 @@ if (q) {
     //   - showBySection: si la sección fue "matcheada" por el <h2>
     //   - show: visible si se cumple cualquiera de las dos
     items().forEach(el => {
+      // ⛔ Mantener los chips siempre visibles y sin resaltado
+      if (el.classList.contains('chip')) {
+        el.style.display = '';
+        unmark(el);
+        return;
+      }
+
       const showSelf = term ? matches(el, term) : true;
       const sec = el.closest('section.card');
       const showBySection = sec ? sectionMatchMap.get(sec) : false;
@@ -167,12 +140,11 @@ if (q) {
 
       if (show) {
         visibleCount++;
-        // Resaltado dentro del elemento visible
-        // Evitar resaltar en chips
+
+        // Resaltado desactivado (pero mantenido para compatibilidad)
         if (!isChip(el)) highlight(el, term);
 
         // Guardamos en "hits" para scroll/flash si coincide directamente o por sección
-        // No usar chips como "primer hit"
         if ((showSelf || showBySection) && !isChip(el)) hits.push(el);
 
         // Apertura automática de <details> cuando la sección matchea
@@ -220,7 +192,7 @@ if (q) {
     }
 
     // Muestra/oculta el mensaje según haya o no elementos visibles
-    empty.textContent = visibleCount ? '' : 'No se encontraron resultados para tu búsqueda.';
+    empty.textContent = visibleCount ? '' : 'No se encuentran resultados para la búsqueda.';
     empty.style.display = visibleCount ? 'none' : 'block';
   });
 }
@@ -269,11 +241,4 @@ anchors.forEach(a => {
     a.setAttribute('target','_blank');
     a.setAttribute('rel','noopener noreferrer');
   }
-});
-
-// ============================================================
-// Efecto de blur/sombra al scrollear (NO SE SI FUNCIONA)
-// ============================================================
-window.addEventListener('scroll', () => {
-  document.body.classList.toggle('scrolled', window.scrollY > 50);
 });
