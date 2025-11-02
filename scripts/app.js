@@ -242,3 +242,32 @@ anchors.forEach(a => {
     a.setAttribute('rel','noopener noreferrer');
   }
 });
+
+// (1) Cerrar todas las FAQs al cargar
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('details.faq[open]').forEach(d => { d.open = false; });
+});
+
+// (2) Cerrar todas las FAQs al hacer clic en el índice (aside o offcanvas)
+document.addEventListener('click', (ev) => {
+  const a = ev.target.closest('.toc a');
+  if (!a) return;
+
+  setTimeout(() => {
+    document.querySelectorAll('details.faq[open]').forEach(d => { d.open = false; });
+  }, 0);
+});
+
+// (3) Modo acordeón: al abrir una, cerrar las demás de la misma sección
+document.addEventListener('toggle', (ev) => {
+  const d = ev.target;
+  if (!(d instanceof HTMLDetailsElement)) return;
+  if (!d.classList.contains('faq')) return;
+  if (!d.open) return;
+
+  const sec = d.closest('section.card');
+  if (!sec) return;
+  sec.querySelectorAll('details.faq[open]').forEach(other => {
+    if (other !== d) other.open = false;
+  });
+}, true);
