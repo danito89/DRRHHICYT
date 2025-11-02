@@ -1,9 +1,7 @@
-/* =========================================================
-   TEMA / VARIABLES (custom properties)
-   ========================================================= */
+/* ========= TEMA / VARIABLES ======= */
 :root{
   --header-h: 125px;       /* Altura fija del header */
-  --search-h: 56px;        /* Altura del buscador */
+  --search-h: 55px;        /* Altura del buscador */
 
   /* Paleta */
   --bg:#232D4F;
@@ -20,6 +18,17 @@
   --shadow: 0 4px 16px rgba(15,23,42,.06);
   --radius: 14px;
   --border-color: rgba(15,23,42,.08);
+}
+
+  /* Etiquetas */
+.tag {
+  background-color: #e0e0e0;       /* color de fondo */
+  color: #333;                     /* color del texto */
+  font-size: 0.9em;                /* un poco más chico que el texto principal */
+  font-weight: 500;                /* semi negrita */
+  padding: 2px 6px;                /* espacio interno */
+  border-radius: 6px;              /* bordes redondeados */
+  margin-left: 8px;                /* espacio a la izquierda */
 }
 
 /* =========================================================
@@ -199,7 +208,6 @@ section[id], .card, details.faq{
   scroll-margin-top: calc(var(--header-h) + var(--search-h) + 20px);
 }
 
-
 /* =========================================================
    RESALTADO DE BÚSQUEDA
    ========================================================= */
@@ -228,5 +236,5 @@ mark.__hl{
   }
 }
 /* =========================================================
-   FIN DEL CSS
+   FIN DEL CSS (por ahora)
    ========================================================= */
