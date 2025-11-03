@@ -71,6 +71,13 @@ header h2.subtitle{
 }
 
 /* =========================================================
+   ANCLAS + HEADER FIJO
+   ========================================================= */
+section[id], .card, details.faq{
+  scroll-margin-top: calc(var(--header-h) + var(--search-h) + 20px);
+}
+
+/* =========================================================
    ASIDE FIJO — BLOQUE ÚNICO
    ========================================================= */
 @media (min-width: 768px){
@@ -209,12 +216,6 @@ summary{ cursor:pointer; font-weight:650; display:flex; align-items:center; gap:
 .social-links a.youtube{ background:linear-gradient(90deg,#ff0000 0%,#c40000 100%); color:#fff }
 .social-links a.linkedin{ background:#0077b5; color:#fff }
 
-/* =========================================================
-   ANCLAS + HEADER FIJO
-   ========================================================= */
-section[id], .card, details.faq{
-  scroll-margin-top: calc(var(--header-h) + var(--search-h) + 20px);
-}
 
 /* =========================================================
    RESALTADO DE BÚSQUEDA
@@ -229,6 +230,11 @@ mark.__hl{
   50%{box-shadow:0 0 0 8px rgba(11,107,191,.18)}
   100%{box-shadow:0 0 0 0 rgba(11,107,191,0)}
 }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 
 /* =========================================================
    FIN DEL CSS (por ahora)
