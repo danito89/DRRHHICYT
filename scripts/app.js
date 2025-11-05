@@ -1,273 +1,389 @@
-// ============================================================================
-// BÚSQUEDA Y RESALTADO EN VIVO PARA FAQs / CONTACTOS / CHIPS
-// ============================================================================
+/**
+ * scripts/app.js
+ * Funcionalidad principal del sitio.
+ * Implementa Intersection Observer para la animación 'fade-in' de los artículos.
+ * + Ajustes para aside fijo, scroll con offset y offcanvas accesible.
+ * + Opción para colapsar todos los <details> al cargar.
+ * + Buscador que abre <details> y resalta coincidencias (3+ letras).
+ * + Sincroniza --header-h con la altura real del header (evita que tape contenido).
+ */
 
-// Input de búsqueda (si no existe, varios handlers se saltan solos)
-const q = document.getElementById('q');
+document.addEventListener('DOMContentLoaded', () => {
+  // === Configuración rápida ===
+  const COLLAPSE_ALL_ON_LOAD = true; // ← poner true para que todas las cards arranquen cerradas
 
-// Utilidad: devuelve todos los elementos "filtrables" (FAQs, contactos y chips)
-const items = () => Array.from(document.querySelectorAll('.faq-item, .contact, .chip'));
+  // Ajusta la variable CSS --header-h con el alto real del header
+  setupHeaderHeightVar();
 
-// Chequeo rápido: ¿el texto del elemento contiene el término?
-// (ahora progresivo: substring case-insensitive para que "arre" matchee "Arredondo")
-const matches = (el, term) => {
-  if (!term) return true;
-  return el.textContent.toLowerCase().includes(term);
-};
+  // Inicializa animaciones de 'fade-in' al hacer scroll
+  setupScrollAnimations();
 
-// Quita marcas <mark> previas (de resaltados anteriores) dentro de un elemento
-const unmark = (el) =>
-  el.querySelectorAll('mark.__hl').forEach(m =>
-    m.replaceWith(document.createTextNode(m.textContent))
+  // Evita animaciones iniciales dentro de cualquier aside sticky
+  markAsideAnimationsAsVisible();
+
+  // Anclajes internos con scroll suave y compensación por header fijo
+  setupSmoothAnchors();
+
+  // Accesibilidad: foco al abrir el offcanvas
+  setupOffcanvasFocus();
+
+  // Colapsar <details> al iniciar (opcional)
+  if (COLLAPSE_ALL_ON_LOAD) collapseAllDetailsOnLoad();
+
+  // Buscador con resaltado y apertura de <details> con coincidencias
+  setupSearch();
+});
+
+// Evita recargar la página al presionar Enter en el buscador
+document.querySelector('.search').addEventListener('submit', e => e.preventDefault());
+
+/* =========================================================
+   Header fijo: altura dinámica
+   - Mantiene --header-h en CSS igual a la altura real del <header>
+   - Evita que el contenido quede tapado por el header y alinea offset de scroll
+   ========================================================= */
+function setupHeaderHeightVar() {
+  const root = document.documentElement;
+  const apply = () => {
+    const header = document.querySelector('header');
+    if (!header) return;
+    const h = Math.ceil(header.getBoundingClientRect().height);
+    root.style.setProperty('--header-h', `${h}px`);
+  };
+
+  // Aplicar al cargar y tras assets (por si cambian fuentes/íconos)
+  apply();
+  window.addEventListener('load', apply);
+
+  // Recalcular en resize/orientation
+  const onResize = debounce(apply, 100);
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  // Recalcular si el header cambia dinámicamente
+  const header = document.querySelector('header');
+  if (window.MutationObserver && header) {
+    const mo = new MutationObserver(() => apply());
+    mo.observe(header, { childList: true, subtree: true, attributes: true });
+  }
+}
+
+/* =========================================================
+   Animaciones y accesibilidad base
+   ========================================================= */
+
+/**
+ * Aplica la clase 'visible' a los elementos '.animate' cuando entran al viewport.
+ * Respeta 'prefers-reduced-motion' para accesibilidad.
+ */
+function setupScrollAnimations() {
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const animatedElements = document.querySelectorAll('.animate');
+  if (!animatedElements.length) return;
+
+  if (prefersReduced) {
+    animatedElements.forEach(el => el.classList.add('visible'));
+    return;
+  }
+
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+
+  const observerCallback = (entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(observerCallback, observerOptions);
+  animatedElements.forEach(element => observer.observe(element));
+}
+
+/**
+ * Marca visibles las animaciones dentro de asides sticky (izq/der) para evitar efecto de entrada.
+ */
+function markAsideAnimationsAsVisible() {
+  document.querySelectorAll('aside.d-md-block .animate')
+    .forEach(el => el.classList.add('visible'));
+}
+
+/**
+ * Scroll suave a anclas internas compensando el alto del header.
+ * Si el offcanvas está abierto en móvil, lo cierra primero y luego hace el scroll.
+ */
+function setupSmoothAnchors() {
+  document.addEventListener('click', (ev) => {
+    const link = ev.target.closest('a[href^="#"]');
+    if (!link) return;
+
+    const hash = link.getAttribute('href');
+    if (!hash || hash === '#') return;
+
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    ev.preventDefault();
+
+    const doScroll = () => {
+      const header = document.querySelector('header');
+      const headerH = header ? header.offsetHeight : 0;
+      const rect = target.getBoundingClientRect();
+      const y = window.pageYOffset + rect.top - (headerH + 20);
+
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({
+        top: y < 0 ? 0 : y,
+        behavior: prefersReduced ? 'auto' : 'smooth'
+      });
+    };
+
+    const panel = document.querySelector('#tocOffcanvas');
+    const isOpen = panel && panel.classList.contains('show');
+
+    if (isOpen && window.bootstrap && bootstrap.Offcanvas) {
+      const instance = bootstrap.Offcanvas.getInstance(panel) || new bootstrap.Offcanvas(panel);
+      panel.addEventListener('hidden.bs.offcanvas', doScroll, { once: true });
+      instance.hide();
+    } else {
+      doScroll();
+    }
+  }, false);
+}
+
+/**
+ * Accesibilidad: cuando se abre el offcanvas, enfoca el primer elemento útil (título/enlace/botón).
+ */
+function setupOffcanvasFocus() {
+  const panel = document.getElementById('tocOffcanvas');
+  if (!panel) return;
+
+  panel.addEventListener('shown.bs.offcanvas', () => {
+    const focusable = panel.querySelector('h5, h6, a, button, [tabindex]:not([tabindex="-1"])');
+    if (focusable && typeof focusable.focus === 'function') {
+      focusable.focus();
+    }
+  });
+}
+
+/**
+ * Colapsa todos los <details> al cargar, salvo los marcados con data-initial="open".
+ */
+function collapseAllDetailsOnLoad() {
+  const allDetails = document.querySelectorAll('details');
+  if (!allDetails.length) return;
+  allDetails.forEach(d => {
+    if (d.getAttribute('data-initial') === 'open') return;
+    d.open = false;
+  });
+}
+
+/* =========================================================
+   Buscador con apertura de <details> y resaltado (3+ letras)
+   - Busca en títulos, summaries y contenidos.
+   - Abre <details> con coincidencias y los cierra si no hay resultados.
+   ========================================================= */
+
+function setupSearch() {
+  const input = document.getElementById('q');
+  if (!input) return;
+
+  const liveRegion = createLiveRegion(); // Región aria-live para anunciar cantidad de resultados
+  const openedBySearch = new Set();      // Trackea qué <details> abrió la búsqueda
+
+  const onInput = debounce(() => {
+    const queryRaw = input.value.trim();
+    if (queryRaw.length < 3) {
+      clearHighlights();
+      closeSearchOpenedDetails(openedBySearch);
+      liveRegion.textContent = '';
+      input.setAttribute('aria-description', 'Ingrese al menos 3 caracteres para buscar.');
+      return;
+    }
+
+    const query = normalize(queryRaw);
+    clearHighlights();
+    closeSearchOpenedDetails(openedBySearch);
+    openedBySearch.clear();
+
+    let results = 0;
+
+    document.querySelectorAll('section .card').forEach(card => {
+      const hasMatchInCard = searchAndHighlightInCard(card, query, openedBySearch);
+      if (hasMatchInCard) results++;
+    });
+
+    liveRegion.textContent = results === 0
+      ? 'Sin resultados.'
+      : `${results} ${results === 1 ? 'resultado' : 'resultados'}.`;
+    input.setAttribute('aria-description', liveRegion.textContent);
+  }, 200);
+
+  input.addEventListener('input', onInput);
+}
+
+function searchAndHighlightInCard(card, normalizedQuery, openedBySearch) {
+  let matched = false;
+
+  const title = card.querySelector('h2, h3');
+  if (title && highlightInElement(title, normalizedQuery)) {
+    matched = true;
+  }
+
+  const detailsList = card.querySelectorAll('details');
+  detailsList.forEach(det => {
+    const summary = det.querySelector('summary');
+    const summaryMatch = summary ? highlightInElement(summary, normalizedQuery) : false;
+
+    const content = det.querySelector('.content') || det;
+    const contentMatch = content ? highlightInElement(content, normalizedQuery) : false;
+
+    if (summaryMatch || contentMatch) {
+      if (!det.open) {
+        det.open = true;
+        det.setAttribute('data-opened-by-search', '1');
+        openedBySearch.add(det);
+      }
+      matched = true;
+    }
+  });
+
+  if (!detailsList.length) {
+    const body = card.querySelector('.card-body') || card;
+    if (highlightInElement(body, normalizedQuery)) {
+      matched = true;
+    }
+  }
+
+  return matched;
+}
+
+/**
+ * Resalta coincidencias completas sin cortar palabras, manejando acentos.
+ * - Normaliza texto y query removiendo diacríticos (NFD)
+ * - Inserta <mark class="search-hit"> alrededor de cada match
+ */
+function highlightInElement(root, normalizedQuery) {
+  if (!normalizedQuery) return false;
+
+  let hit = false;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const parent = node.parentElement;
+      if (!parent) return NodeFilter.FILTER_SKIP;
+      const tag = parent.tagName;
+      if (tag === 'SCRIPT' || tag === 'STYLE') return NodeFilter.FILTER_REJECT;
+      if (parent.classList && parent.classList.contains('search-hit')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+  // Expresión regular insensible a acentos y mayúsculas
+  const accentInsensitiveRegex = new RegExp(
+    normalizedQuery
+      .split('')
+      .map(ch => {
+        const base = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escapado regex
+      })
+      .join(''),
+    'gi'
   );
 
-// -----------------------------------------------------------------------------
-// Utilidad adicional: escapar caracteres especiales de RegExp para buscar texto
-// literalmente (p. ej., términos con +, *, ?, ., etc.)
-// -----------------------------------------------------------------------------
-const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  textNodes.forEach(node => {
+    const text = node.nodeValue;
+    const normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (!normalizedText.toLowerCase().includes(normalizedQuery)) return;
 
-// -----------------------------------------------------------------------------
-// Helper para detectar si un nodo ES o ESTÁ dentro de un .chip
-// -----------------------------------------------------------------------------
-const isChip = (node) =>
-  !!(node && (node.classList?.contains('chip') || node.closest?.('.chip')));
+    const replaced = text.replace(accentInsensitiveRegex, match => {
+      hit = true;
+      return `<mark class="search-hit">${match}</mark>`;
+    });
 
-// -----------------------------------------------------------------------------
-// Utilidad: construir RegExp consistente para búsqueda (sin resaltado)
-// - Palabra completa si el término tiene 3+ caracteres y no contiene espacios.
-// - Case-insensitive y global para encontrar todas las apariciones.
-// -----------------------------------------------------------------------------
-const buildSearchRegex = (term) => {
-  const safe = escapeRegExp(term);
-  const wholeWord = term.length >= 3 && !/\s/.test(term);
-  const pattern = wholeWord ? `\\b${safe}\\b` : safe;
-  return new RegExp(pattern, 'gi');
-};
+    if (hit && replaced !== text) {
+      const span = document.createElement('span');
+      span.innerHTML = replaced;
+      node.replaceWith(span);
+    }
+  });
 
-// Resalta la primera aparición de `term` dentro de todos los nodos de texto de `el`
-// - Usa TreeWalker para iterar sólo nodos de texto.
-// - Reemplaza el nodo de texto por un fragmento con <mark> alrededor del match.
-// - Si `term` está vacío, no hace nada (y previamente se limpió con unmark()).
-const highlight = (el, term) => {
-  // ⚠️ DESACTIVADO: no se aplican marcas; solo nos aseguramos de limpiar cualquier resto.
-  unmark(el);
-  return;
-};
+  return hit;
+}
 
-// ============================================================================
-// OBSERVADOR DE MUTACIONES
-// - Abre automáticamente el primer <details.faq> visible si hay una búsqueda
-//   activa y actualmente no hay ningún <details> abierto.
-// - Reacciona a cambios de 'style' y 'open' en el árbol (p.ej., al filtrar).
-// ============================================================================
+/* Utilidad: encuentra todas las ocurrencias (rangos) de una subcadena. */
+function findAllOccurrences(text, query) {
+  const ranges = [];
+  if (!query) return ranges;
 
-const observer = new MutationObserver(() => {
-  const term = (q && q.value.trim().toLowerCase()) || "";
-  if (!term) return; // 🔸 no abrir nada si no hay búsqueda activa
-
-  // Si no hay ningún <details.faq> abierto y hay resultados visibles, abrimos el primero
-  const openVisible = document.querySelector('details.faq[open]');
-  if(!openVisible){
-    const first = Array
-      .from(document.querySelectorAll('details.faq'))
-      .find(d => d.style.display !== 'none');
-    if(first) first.open = true;
+  let i = 0;
+  while (i <= text.length - query.length) {
+    const j = text.indexOf(query, i);
+    if (j === -1) break;
+    ranges.push({ start: j, end: j + query.length });
+    i = j + query.length;
   }
-});
+  return ranges;
+}
 
-// Observa todo el body por cambios relevantes a filtrado/apertura
-observer.observe(document.body, {
-  attributes: true,
-  subtree: true,
-  attributeFilter: ['style', 'open']
-});
-
-// ============================================================================
-// MANEJO DE ENTRADA EN EL BUSCADOR
-// - Filtra elementos por término.
-// - Permite match por sección (si el <h2> de la sección coincide, se muestra todo).
-// - Resalta coincidencias.
-// - Abre el primer <details> cuando corresponde.
-// - Scroll y flash visual al primer resultado.
-// - Mensaje de "sin resultados".
-// ============================================================================
-
-if (q) {
-  q.addEventListener('input', (e) => {
-    const term = e.target.value.trim().toLowerCase();
-    let visibleCount = 0;   // cantidad de elementos visibles tras el filtrado
-    const hits = [];        // referencias a elementos "coincidentes" (para scroll/flash)
-
-    // --- (1) Detectar secciones cuyo <h2> coincide con el término ---
-    // Si el título de la sección matchea, se considera que toda la sección "aplica".
-    const sections = Array.from(document.querySelectorAll('section.card'));
-    const sectionMatchMap = new Map();
-
-    sections.forEach(sec => {
-      const h2 = sec.querySelector('h2');
-      const matched = !!(term && h2 && h2.textContent.toLowerCase().includes(term));
-      sectionMatchMap.set(sec, matched);
-
-      // Resaltar en el título si hace match; si no, limpiarlo
-      // (highlight desactivado; se mantiene la llamada por estructura)
-      if (matched) {
-        highlight(h2, term);
-      } else if (h2) {
-        unmark(h2);
-      }
-    });
-
-    // --- (2) Mostrar/ocultar items estándar ---
-    // Regla:
-    //   - showSelf: si el propio elemento coincide con el término
-    //   - showBySection: si la sección fue "matcheada" por el <h2>
-    //   - show: visible si se cumple cualquiera de las dos
-    items().forEach(el => {
-      // ⛔ Mantener los chips siempre visibles y sin resaltado
-      if (el.classList.contains('chip')) {
-        el.style.display = '';
-        unmark(el);
-        return;
-      }
-
-      const showSelf = term ? matches(el, term) : true;
-      const sec = el.closest('section.card');
-      const showBySection = sec ? sectionMatchMap.get(sec) : false;
-      const show = showSelf || showBySection;
-
-      el.style.display = show ? '' : 'none';
-
-      if (show) {
-        visibleCount++;
-
-        // Resaltado desactivado (pero mantenido para compatibilidad)
-        if (!isChip(el)) highlight(el, term);
-
-        // Guardamos en "hits" para scroll/flash si coincide directamente o por sección
-        if ((showSelf || showBySection) && !isChip(el)) hits.push(el);
-
-        // Apertura automática de <details> cuando la sección matchea
-        if (showBySection && el.tagName === 'DETAILS') el.open = true;
-      } else {
-        // Si lo ocultamos, limpiamos resaltados previos
-        unmark(el);
-      }
-    });
-
-    // --- (3) Si alguna sección matcheó pero no hubo hits de items,
-    //         abrir el primer <details> de esa sección como "pista" visual.
-    if (term && !hits.length) {
-      const sec = sections.find(s => sectionMatchMap.get(s));
-      if (sec) {
-        const firstDetails = sec.querySelector('details.faq');
-        if (firstDetails) {
-          firstDetails.open = true;
-          hits.push(firstDetails);
-        }
-      }
-    }
-
-    // --- (4) Scroll suave y flash al primer resultado relevante ---
-    if (term && hits.length) {
-      const first = hits[0];
-      const card = first.closest('section.card') || first; //
-      if (card && typeof card.scrollIntoView === 'function') {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        card.classList.add('hit-flash'); //
-        setTimeout(() => card.classList.remove('hit-flash'), 1200);
-      }
-    }
-
-    // --- (5) Estado vacío: mensaje "sin resultados" ---
-    // Crea perezosamente el contenedor si no existe.
-    let empty = document.getElementById('empty-state');
-    if (!empty) {
-      empty = document.createElement('div');
-      empty.id = 'empty-state';
-      empty.className = 'muted';
-      empty.style.padding = '8px 12px';
-      empty.style.display = 'none';
-      q.parentElement.appendChild(empty);
-    }
-
-    // Muestra/oculta el mensaje según haya o no elementos visibles
-    empty.textContent = visibleCount ? '' : 'No se encuentran resultados para la búsqueda.';
-    empty.style.display = visibleCount ? 'none' : 'block';
+/* Limpia todos los resaltados <mark.search-hit>, restaurando los nodos de texto. */
+function clearHighlights() {
+  const marks = document.querySelectorAll('mark.search-hit');
+  marks.forEach(mark => {
+    const parent = mark.parentNode;
+    if (!parent) return;
+    parent.replaceChild(document.createTextNode(mark.textContent), mark);
+    parent.normalize();
   });
 }
 
-// ============================================================================
-// MEJORAS DE USABILIDAD
-// - Botón para enfocar el buscador.
-// - Atajo de teclado '/' para enfocar (si no se está escribiendo en otro input).
-// ============================================================================
-
-const focusBtn = document.getElementById('focus-search');
-if (focusBtn) {
-  focusBtn.addEventListener('click', () => q && q.focus());
+/* Cierra los <details> abiertos por la búsqueda actual (marcados con data-opened-by-search). */
+function closeSearchOpenedDetails(openedBySearch) {
+  openedBySearch.forEach(det => {
+    if (det && det.isConnected && det.getAttribute('data-opened-by-search') === '1') {
+      det.open = false;
+      det.removeAttribute('data-opened-by-search');
+    }
+  });
 }
 
-window.addEventListener('keydown', (ev) => {
-  const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement.tagName);
-  if (ev.key === '/' && !isTyping) {
-    ev.preventDefault();
-    q && q.focus();
-  }
-});
+/* Normaliza cadenas para búsqueda: minúsculas + sin diacríticos. */
+function normalize(str) {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
 
-// ============================================================================
-// NORMALIZACIÓN DE ENLACES
-// - Si el href es '#', se alerta que es un placeholder para reemplazar.
-// - Para enlaces externos (no ancla local, no mailto, no tel):
-//     * Abrir en nueva pestaña (target="_blank")
-//     * Añadir rel="noopener noreferrer" por seguridad.
-// ============================================================================
+/* Debounce: retrasa la ejecución de 'fn' hasta que pasen 'delay' ms sin nuevos llamados. */
+function debounce(fn, delay) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(null, args), delay);
+  };
+}
 
-const anchors = Array.from(document.querySelectorAll('a'));
+/* Crea una región aria-live para anunciar resultados del buscador a lectores de pantalla. */
+function createLiveRegion() {
+  let region = document.getElementById('search-live-region');
+  if (region) return region;
 
-anchors.forEach(a => {
-  const href = a.getAttribute('href') || '';
-
-  // Aviso cuando el link está como '#'
-  if (href === '#') {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('Este enlace es un marcador de posición. Reemplazá el # por la URL real.');
-    });
-
-  // Para enlaces "externos" (todo lo que no sea ancla local, mailto o tel)
-  } else if (!href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
-    a.setAttribute('target','_blank');
-    a.setAttribute('rel','noopener noreferrer');
-  }
-});
-
-// (1) Cerrar todas las FAQs al cargar
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('details.faq[open]').forEach(d => { d.open = false; });
-});
-
-// (2) Cerrar todas las FAQs al hacer clic en el índice (aside o offcanvas)
-document.addEventListener('click', (ev) => {
-  const a = ev.target.closest('.toc a');
-  if (!a) return;
-
-  setTimeout(() => {
-    document.querySelectorAll('details.faq[open]').forEach(d => { d.open = false; });
-  }, 0);
-});
-
-// (3) Modo acordeón: al abrir una, cerrar las demás de la misma sección
-document.addEventListener('toggle', (ev) => {
-  const d = ev.target;
-  if (!(d instanceof HTMLDetailsElement)) return;
-  if (!d.classList.contains('faq')) return;
-  if (!d.open) return;
-
-  const sec = d.closest('section.card');
-  if (!sec) return;
-  sec.querySelectorAll('details.faq[open]').forEach(other => {
-    if (other !== d) other.open = false;
-  });
-}, true);
+  region = document.createElement('div');
+  region.id = 'search-live-region';
+  region.setAttribute('role', 'status');
+  region.setAttribute('aria-live', 'polite');
+  region.style.position = 'absolute';
+  region.style.width = '1px';
+  region.style.height = '1px';
+  region.style.overflow = 'hidden';
+  region.style.clip = 'rect(1px, 1px, 1px, 1px)';
+  region.style.whiteSpace = 'nowrap';
+  document.body.appendChild(region);
+  return region;
+}

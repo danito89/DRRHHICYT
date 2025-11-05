@@ -1,177 +1,172 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
+  <!-- Metadatos básicos del documento y configuración de viewport para diseño responsive -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- ================== Bootstrap & Icons ================== -->
-  <!-- CSS de Bootstrap (antes de CSS para que luego puedas overridear) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons (para íconos de redes, lupa, etc.) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Favicon -->
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Título de la pestaña y descripción para SEO/accesibilidad -->
+  <title>Dirección de Recursos Humanos - Secretaría de Innovación, Ciencia y Tecnología</title>
+  <meta name="description" content="Preguntas frecuentes, trámites y contactos de la Dirección de Recursos Humanos de la Secretaría de Innovación, Ciencia y Tecnología." />
+  <!-- Favicon del sitio -->
   <link rel="icon" type="image/png" href="img/escudoarg_logo.jpeg" />
 
-  <!-- Título y metadatos -->
-  <title>Dirección de RRHH de Innovación, Ciencia y Tecnología</title>
-  <meta name="description" content="Preguntas frecuentes, trámites y contactos de la Dirección de Recursos Humanos de la Secretaría de Innovación, Ciencia y Tecnología." />
+  <!-- Hojas de estilo: Bootstrap (estilos base y utilidades), íconos de Bootstrap y estilos propios -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Hoja de estilos (después de Bootstrap) -->
-  <link rel="stylesheet" href="css/styles.css" />
+  <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <!--    Header - Conserva layout/estilos (bg + tipografía) y funciona bien con Bootstrap.  -->
-  <header>
-    <div class="wrap">
-      <div class="brand">
-        <img src="img/escudoarg_logo.jpeg" alt="Escudo Argentino" />
-            <div>
-              <h1>Secretaría de Innovación, Ciencia y Tecnología</h1>
-              <h2 class="subtitle">Dirección de Recursos Humanos — Preguntas Frecuentes y Trámites</h2>
-            </div>
-      </div>
-              <!-- Buscador (Bootstrap input-group) mantiene id="#q" para app.js -->
-        <div class="search mb-2">
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input id="q" type="search" class="form-control"
-                   placeholder="Escribí para filtrar preguntas, trámites o correos…"
-                   aria-label="Buscar en la página" />
-          </div>
+
+  <!-- ================================== HEADER ==================================
+       Encabezado con marca institucional y buscador del sitio -->
+  <header class="py-3">
+    <div class="wrap d-flex align-items-center justify-content-between flex-wrap">
+      <!-- Marca: logo + títulos -->
+      <div class="brand d-flex align-items-center">
+        <img src="img/escudoarg_logo.jpeg" alt="Logo Secretaría de Innovación, Ciencia y Tecnología" class="me-3 brand-logo">
+        <div>
+          <h1>Secretaría de Innovación, Ciencia y Tecnología</h1>
+          <p class="subtitle mb-0">Dirección de Recursos Humanos - Preguntas Frecuentes y Trámites</p>
         </div>
+      </div>
+      
+      <!-- Buscador interno del sitio (accesible con role="search") -->
+      <form class="search mt-3 mt-md-0" role="search">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+        <label for="q" class="visually-hidden">Buscar en la página</label>
+          <input id="q" type="search" class="form-control" placeholder="Buscar preguntas, trámites o correos…" aria-label="Buscar en la página">
+        </div>
+      </form>
     </div>
   </header>
 
-  <!-- Contenedor principal (usa Bootstrap grid + .wrap para max-width) -->
-  <div class="wrap">
-    <!--      Botón de “Índice” visible SOLO en móvil/tablet.
-      Abre el offcanvas con el índice (no ocupa alto ni se superpone).    -->
-    <div class="d-md-none mb-3">
-      <button id="toc-toggle"
-              class="btn btn-outline-primary w-100"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#tocOffcanvas"
-              aria-controls="tocOffcanvas"
-              aria-expanded="false">
-        <i class="bi bi-list me-2"></i> Índice
-      </button>
-    </div>
-
-    <!--      Grid responsivo Bootstrap:
-      - md y arriba: 3/12 para aside + 9/12 para contenido
-      - xs/sm: 12/12 (aside se maneja como offcanvas, ver más abajo)    -->
-    <div class="row g-3 grid">
-      <!-- ===== Aside sticky (solo desktop) ===== -->
-      <aside class="col-md-4 col-lg-3 d-none d-md-block">
-        <div class="card shadow-sm"
-             style="position:sticky; top: calc(var(--header-h) + 12px); max-height: calc(100dvh - 110px); overflow:auto;">
+  <!-- =================================== MAIN ====================================
+       Contenedor principal con layout de 3 columnas (aside izquierdo, contenido, aside derecho) -->
+  <main id="main" class="wrap py-4" tabindex="-1">
+    <div class="row grid">
+      
+      <!-- ================= Aside IZQUIERDO: Índice =================
+           Navegación interna por anclas (TOC) visible en desktop -->
+      <aside class="col-12 col-md-4 col-lg-3 d-none d-md-block" aria-label="Índice de Secciones">
+        <nav class="card mb-3">
           <div class="card-body">
             <h3 class="h6 mb-3">Índice</h3>
             <ul class="toc list-unstyled mb-0">
-              <li><a class="d-block py-1 px-2 rounded" href="#links">🔗 Links de interés</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#haberes">💰 Liquidación de Haberes</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#impuestos">📄 Impuesto a las Ganancias</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#bancos">🏦 Cambio de entidad bancaria</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#rrhh">👤 RRHH y trámites</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#licencias-medicas">🩺 Licencias médicas</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#licencias-admin">🗓️ Licencias administrativas</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#obra-social">🏥 Salud y Obra Social</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#contactos">📬 Contactos útiles</a></li>
-              <li><a class="d-block py-1 px-2 rounded" href="#redes">🧑‍💻 Redes sociales oficiales</a></li>
+              <li><a href="#rrhh">👤 RRHH y Trámites</a></li>
+              <li><a href="#haberes">💰 Liquidación de Haberes</a></li>
+              <li><a href="#impuestos">📄 Impuesto a las Ganancias</a></li>
+              <li><a href="#fact1109">📄 Personal Decreto 1109/17</a></li>
+              <li><a href="#bancos">🏦 Cambio de entidad bancaria</a></li>
+              <li><a href="#licencias-medicas">🩺 Licencias médicas</a></li>
+              <li><a href="#licencias-admin">🗓️ Licencias administrativas</a></li>
+              <li><a href="#obra-social">🏥 Trámites Obra Social</a></li>
+              <li><a href="#contactos">📬 Contactos útiles</a></li>
+              <li><a href="#redes">💻 Redes oficiales</a></li>
             </ul>
           </div>
-        </div>
+        </nav>
       </aside>
 
-      <!-- ===== Main content ===== -->
-      <main class="col-12 col-md-8 col-lg-9">
-
-        <!-- ===================== Links de interés ===================== -->
-        <section id="links" class="card mb-3">
+      <!-- ================= Contenido principal =================
+           Columna central con tarjetas (cards) por temática -->
+      <section class="col-12 col-md-8 col-lg-6">
+        <!-- ===================== RRHH y trámites ==============================
+             Card con FAQs en <details>/<summary> para legajos, contratos, etc. -->
+        <article id="rrhh" class="card mb-3 animate" aria-labelledby="rrhh-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">🔗 Links de Interés</h2>
+            <h2 class="h5 mb-3" id="rrhh-title">👤 RRHH y Trámites</h2>
 
-            <!--              Grid responsivo para chips:
-              - row-cols-* arma columnas automáticas según ancho
-              - cada link sigue siendo .chip a para que app.js lo resalte/filtre            -->
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2 links">
-              <div class="col">
-                <div class="chip">
-                  <a href="https://sarhaonline.sicyt.gob.ar/" class="btn btn-light w-100" aria-label="Abrir SARHA ONLINE">SARHA ONLINE</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://portal.gde.gob.ar/" class="btn btn-light w-100" aria-label="Abrir Sistema GDE">SISTEMA GDE</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://www.afip.gob.ar/" class="btn btn-light w-100" aria-label="Abrir ARCA">ARCA</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://www.sssalud.gob.ar/?page=bus650" class="btn btn-light w-100" aria-label="Abrir Superintendencia de Servicios de Salud">SUPERINTENDENCIA DE SERVICIOS DE SALUD</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://www.argentina.gob.ar/anses" class="btn btn-light w-100" aria-label="Abrir ANSES">ANSES</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://www.boletinoficial.gob.ar/" class="btn btn-light w-100" aria-label="Abrir Boletín Oficial">Boletín Oficial</a>
-                </div>
-              </div>
-              <div class="col">
-                <div class="chip">
-                  <a href="https://www.infoleg.gob.ar/" class="btn btn-light w-100" aria-label="Abrir Infoleg">Infoleg</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ===================== Liquidación de Haberes ===================== -->
-        <section id="haberes" class="card mb-3">
-          <div class="card-body">
-            <h2 class="h5 mb-3">💰 Liquidación de Haberes</h2>
-
-            <details class="faq faq-item mb-2" open>
-              <summary>¿Dónde descargo mi recibo de sueldo? <span class="tag">Sarha On Line / GDE</span></summary>
+            <!-- Bloque: Legajos (abierto por defecto con open) -->
+            <details class="faq mb-2" open>
+              <summary>Legajos</summary>
               <div class="content pt-2">
-                <p>Tu recibo se publica el primer día hábil del mes en <strong>Sarha On Line</strong>. Ingresá con tu usuario y contraseña y seguí la ruta: <em>Menú Principal → Haberes → Liquidaciones Aprobadas</em>; allí vas a poder visualizarlo y descargarlo en PDF.</p>
-                <p>También podés ingresar al <strong>Sistema GDE</strong>, módulo <em>LUE → Mi Legajo → Recibo Sueldo</em>.</p>
+                <ul class="mb-2">
+                  <li>Actualización datos personales y de grupo familiar.</li>
+                  <li>Formación Académica (Títulos de grado, Cursos, Capacitaciones, Jornadas).</li>
+                  <li>Constancias: Alumno Regular, Materias Aprobadas, Certificado Único de Discapacidad, etc.</li>
+                </ul>
+                <p class="mb-0">Correo: <a href="mailto:rrhh@sicyt.gob.ar">rrhh@sicyt.gob.ar</a></p>
               </div>
             </details>
 
-            <details class="faq faq-item mb-2">
-              <summary>Blanqueo de clave<span class="tag">SARHA Online</span></summary>
+            <!-- Bloque: Contratos (normativa referenciada) -->
+            <details class="faq mb-2">
+              <summary>Contratos (Dto. 1109/17 Y Dto. 1421/02)</summary>
+              <div class="content pt-2">
+                <p class="mb-2">Altas, cambios de nivel, renovaciones y renuncias.</p>
+                <p class="mb-0">Correo: <a href="mailto:contratos@sicyt.gob.ar">contratos@sicyt.gob.ar</a></p>
+              </div>
+            </details>
+
+            <!-- Bloque: Desarrollo (capacitaciones y carrera) -->
+            <details class="faq mb-2">
+              <summary>Desarrollo</summary>
+              <div class="content pt-2">
+                <p class="mb-2">Capacitación y carrera administrativa del personal.</p>
+                <p class="mb-0">Correo: <a href="mailto:desarrollo@sicyt.gob.ar">desarrollo@sicyt.gob.ar</a></p>
+              </div>
+            </details>
+
+            <!-- Bloque: Certificaciones de Servicio -->
+            <details class="faq">
+              <summary>Certificaciones de Servicio</summary>
+              <div class="content pt-2">
+                <p>Detallá ante quien debe ser presentada y qué información debe incluir.</p>
+                <p class="mb-0">Casilla: <a href="mailto:asistencias@sicyt.gob.ar">asistencias@sicyt.gob.ar</a></p>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <!-- =================== Liquidaciones ==============================
+             Card con preguntas sobre recibos, blanqueos, certificados, reintegros y PS 6.2 -->
+        <article id="haberes" class="card mb-3 animate" aria-labelledby="haberes-title">
+          <div class="card-body">
+            <h2 class="h5 mb-3" id="haberes-title">💰 Liquidación de Haberes</h2>
+
+            <!-- Donde descargar recibo (SARHA/GDE) -->
+            <details class="faq mb-2" open>
+              <summary>¿Dónde descargo mi recibo de sueldo? <span class="badge bg-primary ms-2">SARHA / GDE</span></summary>
+              <div class="content pt-2">
+                <p>Los recibos se publican el primer día hábil del mes en <strong>SARHA Online</strong>. Ruta: <em>Menú Principal → Haberes → Liquidaciones Aprobadas</em>.</p>
+                <p>Alternativamente en <strong>Sistema GDE</strong>, módulo <em>LUE → Mi Legajo → Recibo Sueldo</em>.</p>
+              </div>
+            </details>
+
+            <!-- Blanqueo de clave SARHA -->
+            <details class="faq mb-2">
+              <summary>Blanqueo de clave <span class="badge bg-primary ms-2">SARHA</span></summary>
               <div class="content pt-2">
                 <p>Solicitalo por correo a <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a> indicando tu número de CUIT.</p>
               </div>
             </details>
 
-            <details class="faq faq-item mb-2">
-              <summary>Solicitud de certificado de haberes <span class="tag">Decreto N° 14/2012</span></summary>
+            <!-- Certificado de haberes (con nota sobre validez) -->
+            <details class="faq mb-2">
+              <summary>Certificado de haberes (Decreto N° 14/2012)</summary>
               <div class="content pt-2">
-                <p>Este certificado está comprendido por el Artículo 4 del Decreto 14/2012 (régimen de deducción de haberes por obligaciones de préstamos para personal de la APN).</p>
-                <p>Entidades con convenio: <em>Mutual AMEPORT</em>, <em>Asociación Mutual 20 de Septiembre</em> y <em>Mutual del Personal de la Presidencia de la Nación</em>.</p>
-                <p>Para solicitarlo, escribí a <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a>.</p>
-                <p class="note mb-0">💡 De acuerdo con lo establecido en el  Decreto N° 14/2012, 
+                <p>El certificado corresponde al Art. 4 del Decreto 14/2012.</p>
+                <p> Entidades con convenio: Mutual AMEPORT, Asociación Mutual 20 de Septiembre y Mutual del Personal de la Presidencia de la Nación.</p>
+                <p>Solicitar a: <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a>.</p>
+                <p>Los certificados de Pre-Canleación de deuda tienen que ser solicitados a la Mutual elegida y luego ser remitidas por CCOO a los siguientes usuarios:</p>
+                <ul class="mb-2">
+                  <li>Sabrina Camalli - SCAMALLI (DRRHHICYT#JGM)</li>
+                  <li>Daniel Montecchiari - DMONTECCHIARI (DRRHHICYT#JGM)</li>
+                  <li>Rodrigo Arredondo - RARREDONDO (CCYDPICYT#JGM)</li>
+                </ul>
+                  <hr class="my-3">
+                <p class="note mb-0">De acuerdo con lo establecido en el Decreto N° 14/2012, 
                   la certificación de haberes emitida tiene una validez de treinta (30) días corridos a partir de su fecha de emisión. 
-                  En consecuencia, no podrá solicitarse una nueva certificación hasta transcurrido dicho plazo desde la última emisión.
+                  En consecuencia, no podrá solicitarse una nueva certificación hasta transcurrido dicho plazo.
                 </p>
-
               </div>
             </details>
 
-            <details class="faq faq-item mb-2">
-              <summary>Reintegro por Guardería <span class="tag">Decreto 214/06 - Art. 131</span></summary>
+            <!-- Reintegro por guardería (requisitos y envío) -->
+            <details class="faq">
+              <summary>Reintegro por guardería (Decreto 214/06 - Art. 131)</summary>
               <div class="content pt-2">
                 <p>El personal con hijos o menores a cargo, que tengan una edad comprendida entre los CUARENTA Y CINCO (45) días y los CINCO (5) 
                   años cumplidos antes del 30 de junio de cada año, y efectúe erogaciones originadas en la concurrencia de los mismos a guarderías o jardines maternales, 
@@ -183,240 +178,333 @@
                 <ul class="mb-2">
                   <li>Formulario de solicitud de Reintegro por Guardería en sistema GDE ("FORGG").</li>
                   <li> Factura o Recibo del establecimiento</li>
-                <p class="note mb-0">💡 NO SON VALIDOS FACTURAS O RECIBOS "X".</p>
-                <p class="note mb-0">💡 EN CASO DE PRESENTAR FACTURA CORRESPONDIENTE A COLONIA DE VACACIONES, LAS MISMAS DEBEN PERTENECER AL ESTABLECIMIENTO EDUCATIVO.</p>
-                
-                <p></p>
+                </ul>
+                <hr class="my-3">
+                <p class="note mb-0"> No son válidas facturas o recibos “X”.<br>
+                                      En caso de presentar factura correspondiente a <strong>Colonia de Vacaciones</strong>, las mismas deben pertenecer al <strong>establecimiento educativo</strong>.
+                </p>
+                <hr class="my-3">
 
                 <p>Una vez tengas la documentacion, se envía una CCOO a los siguientes usuarios:</p>
-
                 <ul class="mb-2">
-                  <li>Sabrina Camalli — SCAMALLI (DRRHHICYT#JGM)</li>
-                  <li>Daniel Montecchiari — DMONTECCHIARI (DRRHHICYT#JGM)</li>
-                  <li>Rodrigo Arredondo — RARREDONDO (CCYDPICYT#JGM)</li>
-                  <li>Ignacio Rua — IRUA (CAYGPICYT#JGM)</li>
-                  <li>María Cicutin — MCICUTIN (CAYGPICYT#JGM)</li>
+                  <li>Sabrina Camalli - SCAMALLI (DRRHHICYT#JGM)</li>
+                  <li>Daniel Montecchiari - DMONTECCHIARI (DRRHHICYT#JGM)</li>
+                  <li>Rodrigo Arredondo - RARREDONDO (CCYDPICYT#JGM)</li>
+                  <li>Ignacio Rua - IRUA (CAYGPICYT#JGM)</li>
+                  <li>María Cicutin - MCICUTIN (CAYGPICYT#JGM)</li>
                 </ul>
-
               </div>
             </details>
 
-            <details class="faq faq-item">
-              <summary>Formulario PS 6.2 — Certificación de servicios y remuneraciones <span class="tag">Jubilaciones</span></summary>
+            <!-- PS 6.2 para jubilaciones -->
+            <details class="faq mb-2">
+              <summary>Form. PS 6.2 - Cert. de servicios y remuneraciones <span class="badge bg-primary ms-2">Jubilaciones</span></summary>
+                <div class="content pt-2">
+                  <p>Si vas a iniciar trámites de jubilación podés solicitar la certificación a 
+                    <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a>.<br>
+                    Para otras dudas: 
+                    <a href="mailto:drrhh@sicyt.gob.ar">drrhh@sicyt.gob.ar</a>.
+                  </p>
+                </div>
+            </details>
+          </div>
+        </article>
+
+        <!-- ================= Impuesto a las ganancias =================
+             Card con guía para presentación F.572/SIRADIG -->
+        <article id="impuestos" class="card mb-3 animate" aria-labelledby="impuestos-title">
+          <div class="card-body">
+            <h2 class="h5 mb-3" id="impuestos-title">📄 Impuesto a las Ganancias</h2>
+            <details class="faq" open>
+              <summary>¿Cómo presento el Formulario 572-Web? <span class="badge bg-primary ms-2">F572 / SIRADIG</span></summary>
               <div class="content pt-2">
-                <p>Si vas a iniciar trámites de jubilación podés solicitar la certificación a <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a>. Para otras dudas: <a href="mailto:drrhh@sicyt.gob.ar">drrhh@sicyt.gob.ar</a>.</p>
+                <p>Ingresá a <strong>ARCA</strong> con tu clave fiscal y seleccioná el servicio <strong>“SIRADIG - TRABAJADOR”</strong>.</p>
+                <p class="mb-0">  Seguí el instructivo paso a paso: <a href="https://serviciosweb.afip.gob.ar/genericos/guiaspasopaso/VerGuia.aspx?id=120" target="_blank" rel="noopener noreferrer">  <code>ARCA - SIRADIG TRABAJADOR</code> </a></p><br>
+                <p class="note mb-0"><strong>Importante:</strong> si tenés pluriempleo, declar&aacute; todos los empleadores y seleccioná como Agente de Retención <strong>al que abone la mayor remuneración</strong>.</p>
               </div>
             </details>
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== Impuesto a las Ganancias ===================== -->
-        <section id="impuestos" class="card mb-3">
+<!-- ================= Facturas 1109 =================
+     Card con información de envío de facturas para Decreto 1109/17 -->
+<article id="fact1109" class="card mb-3 animate" aria-labelledby="fact1109-title">
+  <div class="card-body">
+    <h2 class="h5 mb-3" id="fact1109-title">📄 Personal Decreto 1109/17</h2>
+
+    <details class="faq" open>
+      <summary>¿Dónde debo presentar la factura?</summary>
+      <div class="content pt-2">
+
+        <p>Las facturas deben remitirse a <a href="mailto:facturasdec1109@sicyt.gob.ar">facturasdec1109@sicyt.gob.ar</a></p>
+
+        <hr class="my-3">
+
+        <p>Se presenta <strong>solo el ORIGINAL</strong> (la primera hoja, sin duplicado ni triplicado) y en formato <strong>PDF legible</strong>.  
+        El sistema no reconoce facturas con los tres ejemplares o en otros formatos.</p>
+
+        <div class="note">
+         EN CASO DE QUE SUS HONORARIOS CONTENGAN CENTAVOS, NO OMITIRLOS
+        </div>
+        <p><!-- espacio --></p>
+
+        <p><strong>Datos de facturación:</strong></p>
+        <ul>
+          <li><strong>Nombre:</strong> SECRETARÍA DE INNOVACIÓN, CIENCIA Y TECNOLOGÍA</li>
+          <li><strong>CUIT:</strong> 30-57191007-8</li>
+          <li><strong>Domicilio:</strong> Godoy Cruz 2320 (CABA)</li>
+          <li><strong>Ingresos Brutos:</strong> Exento</li>
+          <li><strong>IVA:</strong> Sujeto Exento</li>
+        </ul>
+
+        <p><strong>Fecha de emisión:</strong> debe ser la fecha real al momento de hacer la factura (no se aceptan fechas previas).</p>
+
+        <p><strong>Período:</strong> completar “desde” y “hasta” con el mes calendario completo (sin importar feriados o fines de semana).</p>
+
+        <p><strong>Descripción sugerida:</strong></p>
+        <div class="note">
+          Honorarios correspondientes por prestación de servicios requeridos al mes de XXXXX de 2025 por el importe de PESOS (monto en letras).
+        </div>
+
+        <p><strong>Nombre del archivo PDF:</strong></p>
+        <div class="note">
+          APELLIDO, Nombre – MES FACTURADO AÑO<br>
+          Ejemplo: PEREZ, Martina – Septiembre 2025
+        </div>
+
+      </div>
+    </details>
+  </div>
+</article>
+
+        <!-- ================= Cambio de entidad bancaria =================
+             Card con pasos para Banco Nación y otras entidades, y casos de 1109 -->
+        <article id="bancos" class="card mb-3 animate" aria-labelledby="bancos-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">📄 Impuesto a las Ganancias</h2>
+            <h2 class="h5 mb-3" id="bancos-title">🏦 Cambio de entidad bancaria</h2>
 
-            <details class="faq faq-item" open>
-              <summary>¿Cómo presento el Formulario 572-Web? <span class="tag">F572 WEB - SIRADIG TRABAJADOR</span></summary>
+            <!-- Banco Nación: procedimiento y contactos -->
+            <details class="faq mb-2" open>
+              <summary>Cuenta sueldo - Convenio Banco Nación</summary>
               <div class="content pt-2">
-                <p>Ingresá a <strong>ARCA</strong> con tu clave fiscal y seleccioná el servicio <strong>“SIRADIG - TRABAJADOR”</strong>. Seguí el instructivo paso a paso.</p>
-                <p class="note mb-0">💡 <strong>Importante:</strong> si tenés pluriempleo, declar&aacute; todos los empleadores y seleccioná como Agente de Retención <strong>al que abone la mayor remuneración</strong>.</p>
-                <p class="mb-0">  Instructivo: <a href="https://serviciosweb.afip.gob.ar/genericos/guiaspasopaso/VerGuia.aspx?id=120" target="_blank" rel="noopener noreferrer">  <code>ARCA - SIRADIG TRABAJADOR</code> </a></p>
-              </div>
-            </details>
-          </div>
-        </section>
-
-        <!-- ===================== Cambio de entidad bancaria ===================== -->
-        <section id="bancos" class="card mb-3">
-          <div class="card-body">
-            <h2 class="h5 mb-3">🏦 Cambio de entidad bancaria</h2>
-
-            <details class="faq faq-item">
-              <summary>Cuenta Sueldo <span class="tag">Convenio Banco Nación</span></summary>
-              <div class="content pt-2">
-                <p>Para abrir una cuenta en <strong>Banco de la Nación Argentina</strong>, enviá una CCOO con la sucursal de preferencia a los siguientes usuarios:</p>
+                <p>Para solicitar un cambio de cuenta en <strong>Banco de la Nación Argentina</strong>, enviá una CCOO con la sucursal de preferencia a los siguientes usuarios:</p>
                 <ul class="mb-2">
-                  <li>Sabrina Camalli — SCAMALLI (DRRHHICYT#JGM)</li>
-                  <li>Daniel Montecchiari — DMONTECCHIARI (DRRHHICYT#JGM)</li>
-                  <li>Rodrigo Arredondo — RARREDONDO (CCYDPICYT#JGM)</li>
-                  <li>Ignacio Rua — IRUA (CAYGPICYT#JGM)</li>
-                  <li>María Cicutin — MCICUTIN (CAYGPICYT#JGM)</li>
+                  <li>Sabrina Camalli - SCAMALLI (DRRHHICYT#JGM)</li>
+                  <li>Daniel Montecchiari - DMONTECCHIARI (DRRHHICYT#JGM)</li>
+                  <li>Rodrigo Arredondo - RARREDONDO (CCYDPICYT#JGM)</li>
+                  <li>Ignacio Rua - IRUA (CAYGPICYT#JGM)</li>
+                  <li>María Cicutin - MCICUTIN (CAYGPICYT#JGM)</li>
                 </ul>
-                <h3 class="mt-3 h6 text-muted">Otras Entidades Bancarias</h3>
-                <p>Si preferís otra entidad bancaria, el trámite es personal. 
-                  Una vez que tengas la constancia de CBU, adjuntala en una CCOO y remitila a los agentes mencionados anteriormente.
-                </p>
-                <p class="note mb-0">💡 Los agentes que opten por esta opción podrían percibir sus haberes unos días después, dependiendo de los tiempos administrativos.</p>
+                <p class="note mb-0">Si ya posees una cuenta, unicamente deberas enviar la constancia de CBU, indicando la sucursal correspondiente.</p>
+
+                <!-- Sub-sección informativa para otras entidades -->
+                <h3 class="h6 mt-3">Otras Entidades Bancarias</h3>
+                <p>Si optas por percibir tus haberes en otra entidad, el trámite es personal. Una vez que tengas el CBU enviá una CCOO, adjuntando la costancia e indicando la sucursal, a los agentes mencionados anteriormente.</p>
+                <p class="note mb-0">La fecha de cobro correspondiente a quienes opten por esta modalidad podrá diferir de la establecida para el personal que percibe sus haberes mediante Convenio Banco Nación.</p>
               </div>
             </details>
 
-            <details class="faq faq-item mb-2">
-              <summary>Personal contratado <span class="tag">Decreto 1109/17</span></summary>
+            <!-- Personal Decreto 1109/17: formularios requeridos -->
+            <details class="faq mb-2">
+              <summary>Personal contratado (Decreto 1109/17)</summary>
               <div class="content pt-2">
-                <p>Para cambiar el banco de cobro, solicitá por correo a <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a> 
-                  los anexos necesarios para completar el trámite y se le indicaran los pasos a seguir.
-                </p>
-                
+                <p>Para cambiar el banco de cobro, solicitá por correo a <a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a> los anexos necesarios para completar el trámite; se te indicarán los pasos a seguir.</p>
                 <ul class="mb-2">
-                  <li><em>AII A - Formulario Modificación Entes</em></li>
+                  <li><em>II A - Formulario Modificación Entes</em></li>
                   <li><em>IV - Autorización de Acreditación de Pagos</em></li>
                 </ul>
               </div>
             </details>
 
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== RRHH y trámites ===================== -->
-        <section id="rrhh" class="card mb-3">
+        <!-- ================= Licencias médicas =================
+             Card con correo y horario recomendado de aviso -->
+        <article id="licencias-medicas" class="card mb-3 animate" aria-labelledby="medicas-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">👤 RRHH y trámites</h2>
-            <div class="contacts">
-              <div class="contact faq-item mb-2"><strong>LEGAJOS</strong> — Actualización de datos personales, documentación de grupo familiar, constancias y formación. <br>Escribí a <a href="mailto:legajos@sicyt.gob.ar">legajos@sicyt.gob.ar</a>.</div>
-              <div class="contact faq-item mb-2"><strong>CONTRATOS</strong> — Altas, Cambios de Nivel, Renovaciones, Corrimiento de Grados, Funciones, Renuncias (Art. 9° Ley 25.164) y Dto. 1109/17. <br>Escribí a <a href="mailto:contratos@sicyt.gob.ar">contratos@sicyt.gob.ar</a>.</div>
-              <div class="contact faq-item mb-2"><strong>DESARROLLO</strong> — Capacitación, carrera, tramo, compensación transitoria, suplementos terciarios, cambios de agrupamiento, preinscripciones. <br>Escribí a <a href="mailto:desarrollo@sicyt.gob.ar">desarrollo@sicyt.gob.ar</a>.</div>
-              <div class="contact faq-item"><strong>Certificaciones de servicio</strong> — Detallá dónde será presentada y qué información debe contener. <br>Casilla: <a href="mailto:asistencias@sicyt.gob.ar">asistencias@sicyt.gob.ar</a>.</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ===================== Licencias médicas ===================== -->
-        <section id="licencias-medicas" class="card mb-3">
-          <div class="card-body">
-            <h2 class="h5 mb-3">🩺 Licencias médicas</h2>
-            <details class="faq faq-item">
+            <h2 class="h5 mb-3" id="medicas-title">🩺 Licencias médicas</h2>
+            <details class="faq">
               <summary>¿Cómo aviso una licencia médica (propia o por familiar)?</summary>
               <div class="content pt-2">
-                <p>Escribí a <a href="mailto:serviciomedico@sicyt.gob.ar">serviciomedico@sicyt.gob.ar</a>. Si es posible, enviá el aviso antes de las 12 hs del día de la inasistencia. Aplica para 10A, 10B, 10J, 10G y ART.</p>
+                <p>Comunicate, si es posible, antes de las 12:00hs. del día de la inasistencia a la siguiente casilla: <a href="mailto:serviciomedico@sicyt.gob.ar">serviciomedico@sicyt.gob.ar</a></p>
               </div>
             </details>
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== Licencias administrativas ===================== -->
-        <section id="licencias-admin" class="card mb-3">
+        <!-- ================= Licencias administrativas =================
+             Card con formato de asunto, destinatarios y formularios -->
+        <article id="licencias-admin" class="card mb-3 animate" aria-labelledby="admin-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">🗓️ Licencias administrativas</h2>
-            <details class="faq faq-item">
+            <h2 class="h5 mb-3" id="admin-title">🗓️ Licencias administrativas</h2>
+            <details class="faq">
               <summary>¿A quién dirijo los formularios?</summary>
               <div class="content pt-2">
-                <p><strong>Referencia del asunto:</strong> <em>Tipo de licencia - Apellido y nombre - desde / hasta</em> (p. ej. <code>13A - RAMÍREZ Juan - 01/10/2025</code>).</p>
-                <p><strong>Destinataria:</strong> Ángeles Herman (AHERMAN).</p>
-                <p><strong>Con copia a:</strong> Dardo López (DARMLOPEZ) y Marcela Arroyo (MAARROYO).</p>
-                <p><strong>Formularios:</strong> <em>FSOLI</em> (licencias administrativas no médicas) y <em>FOESC</em> (franquicias de día completo u horas).</p>
-                <p><em>Observaciones</em>: Podés adjuntar certificados (p. ej., de estudio) cuando corresponda.</p>
-                <p class="mb-2">Equipo de asistencias:</p>
-                <ul class="mb-0">
-                  <li>Arroyo, Marcela — <a href="mailto:marroyo@sicyt.gob.ar">marroyo@sicyt.gob.ar</a> — interno 1209</li>
-                  <li>Herman, Ángeles — <a href="mailto:aherman@sicyt.gob.ar">aherman@sicyt.gob.ar</a> — interno 1203</li>
-                  <li>López, Dardo — <a href="mailto:dlopez@sicyt.gob.ar">dlopez@sicyt.gob.ar</a></li>
-                </ul>
+                <p><strong>Asunto:</strong> Tipo de licencia - Apellido y nombre - desde / hasta (p. ej. <code>13A - RAMÍREZ Juan - 01/10/2025</code>).</p>
+                <p><strong>Destinataria:</strong> Ángeles Herman (AHERMAN). <strong>Con copia:</strong> Dardo López (DARMLOPEZ) y Marcela Arroyo (MAARROYO).</p>
+                <p>Formularios: <em>FSOLI</em> (no médicas) y <em>FOESC</em> (franquicias).</p>
+                <p>Equipo de asistencias: <a href="mailto:marroyo@sicyt.gob.ar">marroyo@sicyt.gob.ar</a>, <a href="mailto:aherman@sicyt.gob.ar">aherman@sicyt.gob.ar</a>, <a href="mailto:dlopez@sicyt.gob.ar">dlopez@sicyt.gob.ar</a>.</p>
               </div>
             </details>
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== Salud y Obra Social ===================== -->
-        <section id="obra-social" class="card mb-3">
+        <!-- ================= Obra Social =================
+             Card con consulta y cambio de obra social (MiSSalud) -->
+        <article id="obra-social" class="card mb-3 animate" aria-labelledby="social-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">🏥 Salud y Obra Social</h2>
-            <details class="faq faq-item mb-2">
+            <h2 class="h5 mb-3" id="social-title">🏥 Trámites Obra Social</h2>
+            <details class="faq mb-2">
               <summary>Consulta de Obra Social</summary>
               <div class="content pt-2">
                 <p>Accedé a la consulta de Obra Social para ver la vigente y el histórico de cambios en la <a href="https://www.sssalud.gob.ar/?page=bus650" target="_blank" rel="noopener noreferrer"><strong>Superintendencia de Servicios de Salud</strong></a>.</p>
               </div>
             </details>
-
-            <details class="faq faq-item">
+            <details class="faq">
               <summary>Cambio de Obra Social (MiSSalud)</summary>
               <div class="content pt-2">
-                <p>El trámite se realiza desde <strong>ARCA</strong>, con clave fiscal, seleccionando el servicio <strong>“MiSSSalud”</strong>. Luego, comunicá por CCOO la <em>constancia de opción de cambio</em> embebida para actualizar el legajo, derivar aportes y remitirla a:</p>
+                <p>El trámite se realiza ingresando desde <strong>ARCA</strong>, con tu clave fiscal, y seleccioná el servicio <strong>“MiSSSalud”</strong>.</p>
                 <ul class="mb-2">
-                  <li>Natalia Zoe Franco — NZFRANCO (CCYDPICYT#JGM)</li>
-                  <li>Juan Generani — JMGENERANI (CAYGPICYT#JGM)</li>
-                  <li>Vanina Alejandra Villoria — VILLORIAV (CAYGPICYT#JGM)</li>
+                <p class="mb-0">  Seguí el instructivo: <a href="https://serviciosweb.afip.gob.ar/genericos/guiaspasopaso/VerGuia.aspx?id=444" target="_blank" rel="noopener noreferrer">  <code>ARCA - MiSSalud</code> </a></p>
                 </ul>
-                <p class="mb-0">  Instructivo: <a href="https://serviciosweb.afip.gob.ar/genericos/guiaspasopaso/VerGuia.aspx?id=444" target="_blank" rel="noopener noreferrer">  <code>ARCA - MiSSalud</code> </a></p>
 
+                <ul class="mb-2">
+                <p>Luego, comunicá por CCOO la <em>constancia de opción de cambio</em> embebida para actualizar el legajo, derivar aportes y remitirla a:</p>
+                  <li>Natalia Zoe Franco - NZFRANCO (CCYDPICYT#JGM)</li>
+                  <li>Juan Generani - JMGENERANI (CAYGPICYT#JGM)</li>
+                  <li>Vanina Alejandra Villoria - VILLORIAV (CAYGPICYT#JGM)</li>
+                  </ul>
               </div>
             </details>
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== Contactos ===================== -->
-        <section id="contactos" class="card mb-3">
+        <!-- ================= Contactos útiles =================
+             Card tipo directorio con datos de contacto por área -->
+        <article id="contactos" class="card mb-3 animate" aria-labelledby="contactos-title">
           <div class="card-body">
-            <h2 class="h5 mb-3">📬 Contactos útiles</h2>
-            <div class="contacts">
-              <div class="contact mb-2"><strong>Dirección de Recursos Humanos</strong><br><a href="mailto:drrhh@sicyt.gob.ar">drrhh@sicyt.gob.ar</a></div>
-              <div class="contact mb-2"><strong>Liquidación de Haberes</strong><br><a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a></div>
-              <div class="contact"><strong>Sector de Asistencia</strong><br><a href="mailto:asistencias@sicyt.gob.ar">asistencias@sicyt.gob.ar</a></div>
+            <h2 class="h5 mb-3" id="contactos-title">📬 Contactos útiles</h2>
+            <dl class="row">
+              <div class="col-12 col-md-6 mb-3">
+                <dt class="h6">Carrera y Capacitación</dt>
+                <dd class="mb-0"><a href="mailto:desarrollo@sicyt.gob.ar">desarrollo@sicyt.gob.ar</a></dd>
+              </div>
+              <div class="col-12 col-md-6 mb-3">
+                <dt class="h6">Liquidación de Haberes</dt>
+                <dd class="mb-0"><a href="mailto:liquidaciones@sicyt.gob.ar">liquidaciones@sicyt.gob.ar</a></dd>
+              </div>
+              <div class="col-12 col-md-6">
+                <dt class="h6">Sector de Asistencia</dt>
+                <dd class="mb-0"><a href="mailto:asistencias@sicyt.gob.ar">asistencias@sicyt.gob.ar</a></dd>
+              </div>
+              <div class="col-12 col-md-6">
+                <dt class="h6">Servicio Médico</dt>
+                <dd class="mb-0"><a href="mailto:serviciomedico@sicyt.gob.ar">serviciomedico@sicyt.gob.ar</a></dd>
+              </div>
+              <div class="col-12 col-md-6">
+                <dt class="h6">Contrato y Legajo</dt>
+                <dd class="mb-0"><a href="mailto:mail@sicyt.gob.ar">mail@sicyt.gob.ar</a></dd>
+              </div>
+            </dl>
+          </div>
+        </article>
+
+        <!-- ================= Redes oficiales =================
+             Card con botones hacia perfiles de redes -->
+        <article id="redes" class="card mb-3 animate" aria-labelledby="redes-title">
+          <div class="card-body">
+            <h2 class="h5 mb-3" id="redes-title"><i class="bi bi-globe2 me-2" aria-hidden="true"></i>Redes oficiales</h2>
+            <div class="d-grid gap-2 d-md-block">
+              <a class="btn btn-dark btn-social mb-2 me-2" href="https://x.com/innovacionar" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter-x me-2" aria-hidden="true"></i>X (ex Twitter)</a>
+              <a class="btn btn-social instagram-btn mb-2 me-2" href="https://www.instagram.com/innovacionar" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram me-2" aria-hidden="true"></i>Instagram</a>
+              <a class="btn btn-danger btn-social mb-2 me-2" href="https://www.youtube.com/@innovacionarok" target="_blank" rel="noopener noreferrer"><i class="bi bi-youtube me-2" aria-hidden="true"></i>YouTube</a>
+              <a class="btn btn-social linkedin-btn" href="https://www.linkedin.com/company/innovacionar" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin me-2" aria-hidden="true"></i>LinkedIn</a>
             </div>
           </div>
-        </section>
+        </article>
 
-        <!-- ===================== Redes sociales ===================== -->
-        <section id="redes" class="card mb-3">
+      </section>
+
+      <!-- ================= Aside DERECHO: Links de Interés =================
+           Columna derecha sticky en desktop con accesos rápidos -->
+      <aside class="col-12 col-md-4 col-lg-3 d-none d-md-block aside-right" aria-label="Links de Interés">
+        <!-- Tip: dejo 'animate visible' para evitar salto de animación en sticky -->
+        <article id="links" class="card mb-3 animate visible" aria-labelledby="links-title">
           <div class="card-body">
-            <h2 class="h5 mb-3"><i class="bi bi-globe2 me-2"></i>Redes sociales oficiales</h2>
-
-            <!--              Botones          -->
-            <div class="d-grid gap-2 social-links">
-              <a href="https://x.com/innovacionar" target="_blank" rel="noopener noreferrer" class="btn btn-dark d-flex align-items-center justify-content-center x">
-                <i class="bi bi-twitter-x me-2"></i> X (ex Twitter)
-              </a>
-
-              <a href="https://www.instagram.com/innovacionar" target="_blank" rel="noopener noreferrer" class="btn d-flex align-items-center justify-content-center instagram text-white">
-                <i class="bi bi-instagram me-2"></i> Instagram
-              </a>
-
-              <a href="https://www.youtube.com/@innovacionarok" target="_blank" rel="noopener noreferrer" class="btn youtube d-flex align-items-center justify-content-center">
-                <i class="bi bi-youtube me-2"></i> YouTube
-              </a>
-
-              <a href="https://www.linkedin.com/company/innovacionar" target="_blank" rel="noopener noreferrer" class="btn d-flex align-items-center justify-content-center linkedin text-white" style="background-color:#0077b5;">
-                <i class="bi bi-linkedin me-2"></i> LinkedIn
-              </a>
+            <h3 class="h6 mb-3" id="links-title">🔗 Links de Interés</h3>
+            <div class="row row-cols-1 g-2 links">
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://sarhaonline.sicyt.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 SARHA ONLINE</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://portal.gde.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Sistema GDE</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://www.afip.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 ARCA (ex AFIP)</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://www.sssalud.gob.ar/?page=bus650" target="_blank" rel="noopener noreferrer">🔗 Superintendencia de Servicios de Salud</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://www.argentina.gob.ar/anses" target="_blank" rel="noopener noreferrer">🔗 ANSES</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://www.boletinoficial.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Boletín Oficial</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://www.infoleg.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Infoleg</a></div></div>
+              <div class="col"><div class="chip"><a class="btn btn-primary w-100" href="https://mapadelestado.jefatura.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Mapa del Estado</a></div></div>
             </div>
           </div>
-        </section>
+        </article>
+      </aside>
 
-        <footer class="text-center text-muted">
-          &copy; 2025 — Dirección de RRHH. Este sitio es de uso interno.
-        </footer>
-      </main>
     </div>
-  </div>
+  </main>
 
-  <!-- ============= Offcanvas del Índice (solo móvil) ============= -->
-  <!--    Offcanvas de Bootstrap con el mismo TOC que el aside (contenido duplicado a propósito).
-    Ventaja: UX móvil impecable, no se superpone al contenido ni ocupa alto permanente.  -->
-  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+  <!-- ================= Offcanvas móvil =================
+       Menú lateral (solo en mobile) con índice y links de interés -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="tocOffcanvasLabel">Índice</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+      <h5 id="tocLabel">Índice</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar índice"></button>
     </div>
-    <div class="offcanvas-body">
-      <ul class="toc list-unstyled">
-        <li><a class="d-block py-1 px-2 rounded" href="#links" data-bs-dismiss="offcanvas">🔗 Links de interés</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#haberes" data-bs-dismiss="offcanvas">💰 Liquidación de Haberes</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#impuestos" data-bs-dismiss="offcanvas">📄 Impuesto a las Ganancias</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#bancos" data-bs-dismiss="offcanvas">🏦 Cambio de entidad bancaria</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#rrhh" data-bs-dismiss="offcanvas">👤 RRHH y trámites</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#licencias-medicas" data-bs-dismiss="offcanvas">🩺 Licencias médicas</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#licencias-admin" data-bs-dismiss="offcanvas">🗓️ Licencias administrativas</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#obra-social" data-bs-dismiss="offcanvas">🏥 Salud y Obra Social</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#contactos" data-bs-dismiss="offcanvas">📬 Contactos útiles</a></li>
-        <li><a class="d-block py-1 px-2 rounded" href="#redes" data-bs-dismiss="offcanvas">🧑‍💻 Redes sociales oficiales</a></li>
+    <!-- aria-labelledby ahora referencia un ID único en móvil -->
+    <div class="offcanvas-body" aria-labelledby="links-title-mobile">
+      <ul class="list-unstyled">
+        <li><a class="d-block py-1" href="#rrhh" data-bs-dismiss="offcanvas">👤 RRHH y Trámites</a></li>
+        <li><a class="d-block py-1" href="#haberes" data-bs-dismiss="offcanvas">💰 Liquidación de Haberes</a></li>
+        <li><a class="d-block py-1" href="#impuestos" data-bs-dismiss="offcanvas">📄 Impuesto a las Ganancias</a></li>
+        <li><a class="d-block py-1" href="#fact1109" data-bs-dismiss="offcanvas">📄 Personal Decreto 1109/17</a></li>
+        <li><a class="d-block py-1" href="#bancos" data-bs-dismiss="offcanvas">🏦 Cambio de entidad bancaria</a></li>
+        <li><a class="d-block py-1" href="#licencias-medicas" data-bs-dismiss="offcanvas">🩺 Licencias médicas</a></li>
+        <li><a class="d-block py-1" href="#licencias-admin" data-bs-dismiss="offcanvas">🗓️ Licencias administrativas</a></li>
+        <li><a class="d-block py-1" href="#obra-social" data-bs-dismiss="offcanvas">🏥 Trámites Obra Social</a></li>
+        <li><a class="d-block py-1" href="#contactos" data-bs-dismiss="offcanvas">📬 Contactos útiles</a></li>
+        <li><a class="d-block py-1" href="#redes" data-bs-dismiss="offcanvas">💻 Redes oficiales</a></li>
       </ul>
+
+      <hr class="my-3">
+      <div class="d-block d-md-none">
+        <!-- ID único para móvil -->
+        <h6 class="mb-2" id="links-title-mobile">🔗 Links de Interés</h6>
+        <div class="row row-cols-1 g-2">
+          <div class="col"><a class="btn btn-primary w-100" href="https://sarhaonline.sicyt.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 SARHA ONLINE</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://portal.gde.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 SISTEMA GDE</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://www.afip.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 ARCA (ex AFIP)</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://www.sssalud.gob.ar/?page=bus650" target="_blank" rel="noopener noreferrer">🔗 Superintendencia de Servicios de Salud</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://www.argentina.gob.ar/anses" target="_blank" rel="noopener noreferrer">🔗 ANSES</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://www.boletinoficial.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Boletín Oficial</a></div>
+          <div class="col"><a class="btn btn-primary w-100" href="https://www.infoleg.gob.ar/" target="_blank" rel="noopener noreferrer">🔗 Infoleg</a></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ================== JS ================== -->
-  <!-- Bootstrap JS (bundle con Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Botón flotante para abrir el índice en mobile -->
+  <button class="btn btn-primary d-md-none floating-toc-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-label="Abrir índice de contenido">
+      <i class="bi bi-list me-1" aria-hidden="true"></i> Índice
+  </button>
+  
+  <!-- ================================== FOOTER ==================================
+       Pie de página con información institucional -->
+  <footer class="text-center py-3 mt-4">
+    <div class="wrap">
+      <p class="mb-0">&copy; 2025 - Dirección de Recursos Humanos. Secretaría de Innovación, Ciencia y Tecnología. Sitio interno.</p>
+    </div>
+  </footer>
 
-  <!-- Tu JS (usa defer en el HTML original; ) -->
-  <script src="scripts/app.js" defer></script>
+  <!-- ================================== SCRIPTS ==================================
+       JS de Bootstrap (bundle con Popper) y script propio de la app -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts/app.js"></script>
 </body>
 </html>

@@ -1,241 +1,460 @@
-/* ========= TEMA / VARIABLES ======= */
-:root{
-  --header-h: 125px;       /* Altura fija del header */
-  --search-h: 55px;        /* Altura del buscador */
-
-  /* Paleta */
-  --bg:#232D4F;
-  --panel:#ffffff;
-  --card:#ffffff;
-  --muted:#080808;
-  --text:#0f172a;
-  --brand:#0b6bbf;
-  --brand-600:#095a9f;
-
-  /* Utilidades */
-  --ok:#157347;
-  --warn:#b08900;
-  --shadow: 0 4px 16px rgba(15,23,42,.06);
-  --radius: 14px;
-  --border-color: rgba(15,23,42,.08);
-}
-
-  /* Etiquetas */
-.tag {
-  background-color: #e0e0e0;       /* color de fondo */
-  color: #333;                     /* color del texto */
-  font-size: 0.9em;                /* un poco más chico que el texto principal */
-  font-weight: 500;                /* semi negrita */
-  padding: 2px 6px;                /* espacio interno */
-  border-radius: 6px;              /* bordes redondeados */
-  margin-left: 8px;                /* espacio a la izquierda */
+/* =========================================================
+   Paleta y Variables de Tema (Azul Institucional)
+   - Define los colores, tipografías y transiciones globales del sitio.
+   ========================================================= */
+:root {
+  --primary-dark-blue: #002e60;     /* Azul principal institucional */
+  --secondary-blue: #004d99;        /* Azul secundario para acentos */
+  --background-dark: #252c50;       /* Fondo general oscuro */
+  --surface-light: #f0f4f8;         /* Fondo claro para tarjetas */
+  --text-light: #e0f2ff;            /* Texto sobre fondos oscuros */
+  --text-dark: #333;                /* Texto sobre fondos claros */
+  --border-subtle: #004d99;         /* Color de bordes suaves */
+  --transition-speed: 0.3s;         /* Duración base de las animaciones */
+  --header-h: 125px;                /* Altura del encabezado */
+  --search-h: 0px;                  /* Espacio reservado para buscador (si aplica) */
 }
 
 /* =========================================================
-   BASE / LAYOUT GENERAL
+   Base y Tipografía
+   - Define el estilo general del cuerpo, tipografía y envoltorio principal.
    ========================================================= */
-html, body{ height:100% }
-body{
-  background: var(--bg);
-  color: var(--text);
-  padding-top: var(--header-h);
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-light);
+  line-height: 1.6;
 }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
 
-.wrap{
-  max-width:1200px;
-  margin:0 auto;
-  padding:32px 24px;
+/* Enlace de salto rápido (accesibilidad)
+   - Permite ir directamente al contenido principal. */
+.skip-link {
+  position: absolute; top: -40px; left: 0;
+  background: var(--secondary-blue); color: #fff;
+  padding: 8px; z-index: 10000;
+  transition: top .3s ease-in;
 }
-.grid{ margin-top:22px }
-
-/* =========================================================
-   HEADER (fijo)
-   ========================================================= */
-header{
-  display:flex; align-items:center;
-  background:#232D4F;
-  border-bottom:1px solid var(--border-color);
-  position:fixed; top:0; left:0; width:100%; z-index:100;
-  font-family:"Lora", serif;
-}
-header h1{ margin:0; font-weight:700; color:#fff; font-size:clamp(20px,3vw,28px) }
-.brand{ display:flex; align-items:center; gap:12px }
-.brand img {
-  width:75px; height:75px; border-radius:12px; object-fit:cover;
-  transition: transform .2s ease-in-out;
-}
-.brand img:hover { transform: scale(1.05); }
-header h2.subtitle{
-  font-size:1rem; font-weight:400; color:rgba(255,255,255,.85);
-  margin:2px 0 0 0; font-family:system-ui, sans-serif;
-}
+.skip-link:focus { top: 0; }
 
 /* =========================================================
-   ANCLAS + HEADER FIJO
+   Asides sticky (izq + der)
+   - Fija los paneles laterales para mantenerlos visibles al hacer scroll.
    ========================================================= */
-section[id], .card, details.faq{
-  scroll-margin-top: calc(var(--header-h) + var(--search-h) + 20px);
+@media (min-width: 768px) {
+  aside.d-md-block {
+    position: sticky;
+    top: calc(var(--header-h) + 20px);
+    align-self: start;
+    max-height: calc(100vh - (var(--header-h) + 40px));
+    overflow: auto;
+    scrollbar-gutter: stable;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* En móvil se ocultan los asides, reemplazados por el menú offcanvas */
+@media (max-width: 767.98px) {
+  aside.d-md-block { display: none !important; }
 }
 
 /* =========================================================
-   ASIDE FIJO — BLOQUE ÚNICO
+   Topbar / Header
+   - Encabezado fijo del sitio con logotipo y buscador.
    ========================================================= */
+.topbar {
+  background: var(--primary-dark-blue);
+  color: #fff;
+  padding: 8px 15px;
+  text-align: center;
+  font-size: .85rem;
+  border-bottom: 1px solid var(--secondary-blue);
+}
+
+/* Encabezado principal fijo con sombra y borde inferior */
+header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  z-index: 1000;
+  background: var(--background-dark);
+  color: #fff;
+  border-bottom: 2px solid var(--secondary-blue);
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
+
+/* Crea un espacio invisible para que el contenido no quede debajo del header */
+body::before {
+  content: "";
+  display: block;
+  height: calc(var(--header-h) + 20px);
+}
+
+.brand-logo { width: 60px; height: auto; border-radius: 6px; transition: transform .3s ease; }
+header h1 { color: #fff; font-size: 1.8rem; font-weight: 600; }
+header .subtitle { color: #c0c0c0; font-size: .9rem; }
+
+/* Ajusta el contenido principal para compensar la altura del header fijo */
+main { padding-top: calc(var(--header-h) + 20px); }
+
+/* Evita que los anclajes sean tapados por el header al hacer scroll */
+#main h2[id], #main h3[id], article[id] { scroll-margin-top: calc(var(--header-h) + 20px); }
+
+/* =========================================================
+   Búsqueda
+   - Estilos para el formulario y campo de búsqueda del header.
+   ========================================================= */
+.search { max-width: 480px; width: 100%; }
+.search .input-group-text {
+  background: var(--secondary-blue);
+  color: #fff;
+  border-color: var(--secondary-blue);
+}
+.search .form-control {
+  background: #fff;
+  color: var(--text-dark);
+  border-color: var(--secondary-blue);
+  box-shadow: none;
+}
+
+/* =========================================================
+   Cards y Animaciones
+   - Diseño de tarjetas y efecto de aparición al hacer scroll.
+   ========================================================= */
+.animate { opacity: 0; transform: translateY(20px); transition: opacity .8s ease-out, transform .6s ease-out; }
+.animate.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .animate { opacity: 1; transform: none; transition: none; }
+}
+
+.card {
+  background: var(--surface-light);
+  color: var(--text-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  transition: all var(--transition-speed) ease-in-out;
+}
+.card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
+.card-body h2.h5, .card-body h3.h6 {
+  color: var(--primary-dark-blue);
+  border-bottom: 2px solid var(--secondary-blue);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+.card-body p:last-child, .content p:last-child, .content ul:last-child { margin-bottom: 0; }
+
+/* =========================================================
+   Índice
+   - Estilo de la lista de navegación lateral con efecto hover.
+   ========================================================= */
+.toc a {
+  color: var(--primary-dark-blue);
+  padding: 8px 0;
+  display: block;
+  transition: all var(--transition-speed) ease;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.toc a:hover, .toc a:focus-visible {
+  color: #fff;
+  background: var(--secondary-blue);
+  padding-left: 10px;
+  text-decoration: none;
+  outline: none;
+}
+
+/* =========================================================
+   FAQs (details/summary)
+   - Apariencia de los bloques desplegables de preguntas frecuentes.
+   ========================================================= */
+.faq summary {
+  background: #e3effa;
+  color: var(--primary-dark-blue);
+  border: 1px solid var(--secondary-blue);
+  padding: 12px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+.faq summary:hover, .faq summary:focus-visible {
+  background: #c9e0f5;
+  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  outline: none;
+}
+.faq .content {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 15px;
+}
+
+/* =========================================================
+   Botones y Links de Interés
+   - Estilos para los botones primarios y chips de enlaces.
+   ========================================================= */
+.btn-primary, .chip .btn-primary {
+  background: var(--secondary-blue);
+  color: #fff;
+  border-color: var(--secondary-blue);
+  font-weight: 500;
+  transition: all var(--transition-speed) ease;
+}
+.btn-primary:hover, .chip .btn-primary:hover {
+  background: var(--primary-dark-blue);
+  border-color: var(--primary-dark-blue);
+  box-shadow: 0 4px 10px rgba(0,77,153,.4);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   Redes Sociales
+   - Configura el estilo, tamaño y disposición de los botones sociales.
+   ========================================================= */
+.btn-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 180px;
+  height: 45px;
+  border: none !important;
+  border-radius: 6px;
+  font-weight: 500;
+  text-align: center;
+  color: #fff !important;
+  transition: all var(--transition-speed) ease;
+  line-height: 1;
+}
+.btn-social i { font-size: 1.2rem; vertical-align: middle; line-height: 1; }
+#redes .btn-social { margin: 0 8px 8px 0; }
+#redes .btn-social:last-child { margin-right: 0; }
+
+.btn-dark { background: #000 !important; }         /* X */
+.btn-danger { background: #ff0000 !important; }    /* YouTube */
+.instagram-btn {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdd497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
+}
+.linkedin-btn { background: #0077b5 !important; }
+.linkedin-btn i { transform: scale(1.25); margin-top: 1px; }
+#redes .d-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+/* Centrado de los botones sociales dentro del bloque “Redes oficiales” */
+#redes .card-body { text-align: left; }
+#redes .d-grid {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+#redes .btn-social {
+  flex: 0 1 230px;
+  justify-content: center;
+}
+
+/* Distribución simétrica tipo grid en 2 columnas (responsive) */
+#redes .d-grid {
+  display: grid !important;
+  grid-template-columns: 1fr;      /* En móvil: una sola columna */
+  gap: 12px;
+  justify-items: stretch;
+}
+
+/* En pantallas medianas o mayores: 2 columnas centradas */
+@media (min-width: 768px) {
+  #redes .d-grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    max-width: 560px;
+    margin-inline: auto;
+  }
+}
+
+/* Normaliza tamaños y márgenes de botones sociales */
+#redes .btn-social {
+  width: 100%;
+  height: 46px;
+  margin-right: 0 !important;
+  border-radius: 8px;
+  justify-content: center;
+}
+
+/* =========================================================
+   Footer
+   - Pie institucional del sitio con estilo sobrio.
+   ========================================================= */
+footer {
+  background: var(--background-dark);
+  color: var(--text-light);
+  padding: 25px 0;
+  font-size: .9rem;
+  border-top: 2px solid var(--secondary-blue);
+}
+footer a { color: #99ccff; }
+footer a:hover { color: #fff; text-decoration: underline; }
+
+/* =========================================================
+   Offcanvas móvil
+   - Estilos del panel lateral desplegable y su botón flotante.
+   ========================================================= */
+.offcanvas-header {
+  background: var(--primary-dark-blue);
+  color: #fff;
+  border-bottom: 2px solid var(--secondary-blue);
+}
+.offcanvas-header .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+.offcanvas-body { background: #fff; }
+.offcanvas-body a { color: var(--primary-dark-blue); font-weight: 500; }
+
+/* Botón flotante de acceso rápido al índice en pantallas móviles */
+.floating-toc-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1050;
+  background: var(--secondary-blue);
+  border-color: var(--secondary-blue);
+  box-shadow: 0 4px 8px rgba(0,0,0,.4);
+}
+.floating-toc-btn:hover {
+  background: var(--primary-dark-blue);
+  border-color: var(--primary-dark-blue);
+}
+
+/* =========================================================
+   NOTAS DESTACADAS
+   - Caja de aviso o información importante dentro de las tarjetas.
+   ========================================================= */
+.note {
+  background-color: rgba(255, 245, 157, 0.3); /* Amarillo suave */
+  border-left: 4px solid #ffc107;             /* Borde lateral de acento */
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: block;
+  font-size: 0.95rem;
+}
+
+/* =========================================================
+   CONTACTOS ÚTILES - 2 columnas (md+), espaciado parejo
+   ========================================================= */
+
+/* Contenido del card un poco más compacto */
+#contactos .card-body{ padding:16px 20px }
+
+/* Usa flex del propio .row, pero controlando el gap y el ancho de las columnas */
 @media (min-width: 768px){
-  .wrap { position: relative; }
-
-  aside.col-md-4.col-lg-3{
-    position: fixed;
-    top: calc(var(--header-h) + var(--search-h) + 0px);
-    left: calc((100vw - min(100vw, 1200px))/2 + 24px);
-    width: 280px;
-    max-height: calc(100vh - var(--header-h) - var(--search-h) - 30px);
-    overflow-y: auto;
-    z-index: 1;
+  #contactos dl.row{
+    display:flex;              /* mantiene Bootstrap, pero forzamos gap consistente */
+    flex-wrap:wrap;
+    gap:10px 28px;             /* fila, columna */
   }
-
-  main.col-12.col-md-8.col-lg-9{
-    margin-left: calc(300px + 30px);
+  /* cada bloque ocupa media fila, restando el gap para que no salte de línea */
+  #contactos dl.row > div{
+    flex:0 0 calc(50% - 14px); /* 14px = la mitad del gap horizontal */
+    max-width:calc(50% - 14px);
   }
 }
 
-@media (min-width: 992px){
-  aside.col-md-4.col-lg-3{ width: 300px; }
-  main.col-12.col-md-8.col-lg-9{ margin-left: calc(300px + 24px); }
+/* En móvil, una sola columna con ritmo compacto */
+@media (max-width: 767.98px){
+  #contactos dl.row{ gap:10px 0 }
+  #contactos dl.row > div{ width:100% }
+}
+
+/* Título + enlace con separación mínima y alturas uniformes */
+#contactos dl.row > div{ margin-bottom:8px; line-height:1.35 }
+#contactos dt{
+  margin:0 0 2px 0;
+  font-weight:600;
+  color:var(--primary-dark-blue);
+  white-space:nowrap;          /* evita que el título salte de línea */
+}
+#contactos dd{ margin:0 }
+#contactos dd a{
+  text-decoration:none;
+  color:var(--secondary-blue);
+  font-weight:500;
+}
+#contactos dd a:hover{
+  text-decoration:underline;
+  color:var(--primary-dark-blue);
+}
+
+/* Evita el “texto vertical” de emails largos sin cortar palabra por palabra */
+#contactos dd, #contactos dd a{
+  word-break:normal;
+  overflow-wrap:break-word;    /* solo corta si realmente no entra */
+  white-space:normal;
 }
 
 /* =========================================================
-   ASIDE / TOC
-   ========================================================= */
-.toc{ list-style:none; padding:0; margin:0 }
-.toc li{ margin:.25rem 0 }
-.toc a{
-  color:var(--text); text-decoration:none; display:block;
-  padding:.4rem .55rem; border-radius:10px;
-}
-.toc a:hover, .toc a:focus{ background:rgba(11,107,191,.08); }
-.offcanvas{ background:var(--panel) }
-
-/* =========================================================
-   TARJETAS
-   ========================================================= */
-.card{
-  background:var(--card);
-  border:1px solid var(--border-color);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-}
-.card .card-body{ padding:18px 18px }
-.card h2, .card .h5{ color:#0b2a49 }
-
-/* =========================================================
-   BUSCADOR
-   ========================================================= */
-.search .input-group-text{ background:#fff; border:1px solid var(--border-color) }
-.search .form-control{
-  border:1px solid var(--border-color);
-  border-left:0;
-  background:#fff; color:var(--text);
-}
-
-  /* ESTADO VACÍO DEL BUSCADOR */
-  #empty-state {
-  color: #ffffff;      /* gris más suave */
-  font-style: normal;  /* tipo de fuente */
-  font-weight: bold;   /* negrita */
-  text-align: center;}
-
-.search .form-control::placeholder{ color:var(--muted) }
-
-/* =========================================================
-   LINKS DE INTERÉS
-   ========================================================= */
-.links{ margin:6px 0 }
-.chip a.btn{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  padding:14px 16px; border-radius:12px; font-weight:600;
-  background:linear-gradient(180deg,#fff,#f9fafc);
-  border:1px solid rgba(148,163,184,.25);
-  box-shadow:0 2px 4px rgba(0,0,0,.04);
-  color:var(--brand);
-  transition:all .25s ease;
-}
-.chip a.btn:hover{
-  background:linear-gradient(180deg,#f0f7ff,#e8f2ff);
-  border-color:rgba(96,165,250,.6);
-  transform:translateY(-2px);
-  box-shadow:0 4px 10px rgba(11,107,191,.15);
-  color:var(--brand-600);
-}
-.chip a.btn::before{ content:"🔗"; font-size:1rem; opacity:.7 }
-
-/* =========================================================
-   FAQ
-   ========================================================= */
-details.faq{
-  border:1px solid var(--border-color);
-  border-radius:14px;
-  padding:14px 16px;
-  background:#ffffff;
-  transition:border-color .2s;
-}
-details.faq[open]{ border-color:#7bb5e6 }
-summary{ cursor:pointer; font-weight:650; display:flex; align-items:center; gap:10px; }
-.faq .content{ margin-top:10px; color:var(--text) }
-
-/* =========================================================
-   CONTACTOS
-   ========================================================= */
-.contacts{ display:grid; grid-template-columns:1fr; gap:10px }
-.contact{ padding:10px 12px; border:1px solid var(--border-color); border-radius:12px; background:#fff; }
-.contact strong{ display:block }
-
-/* =========================================================
-   NOTAS / AVISOS
-   ========================================================= */
-.note{
-  display:block; margin:12px 0 0 0; padding:10px 14px;
-  background:#fff8db; border:1px solid #f3e39f; color:#705e00;
-  border-radius:8px; font-size:.95rem;
-}
-
-/* =========================================================
-   REDES SOCIALES
-   ========================================================= */
-.social-links{ display:grid; gap:8px }
-.social-links a{
-  border-radius:999px; font-weight:600;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  transition:all .25s ease-in-out;
-  padding:10px 14px; font-size:.95rem;
-}
-.social-links a.x{ background:#000; color:#fff }
-.social-links a.instagram{
-  background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%);
-  color:#fff;
-}
-.social-links a.youtube{ background:linear-gradient(90deg,#ff0000 0%,#c40000 100%); color:#fff }
-.social-links a.linkedin{ background:#0077b5; color:#fff }
-
-
-/* =========================================================
-   RESALTADO DE BÚSQUEDA
-   ========================================================= */
-mark.__hl{
-  background:#fff3c4; outline:1px solid rgba(255,193,7,.35);
-  padding:0 .15em; border-radius:3px;
-}
-.hit-flash{ animation: hit-flash 1.2s ease-out }
-@keyframes hit-flash{
-  0%{box-shadow:0 0 0 0 rgba(11,107,191,.45)}
-  50%{box-shadow:0 0 0 8px rgba(11,107,191,.18)}
-  100%{box-shadow:0 0 0 0 rgba(11,107,191,0)}
-}
-
-/* =========================================================
-   FOOTER
+   OFFCANVAS (MÓVIL) - Índice y Links de Interés
+   Problemas que corrige:
+   1) En el índice móvil los enlaces aparecen subrayados.
+   2) En “Links de Interés” (dentro del offcanvas) los botones pierden estilo.
+   3) El botón flotante “Índice” se superpone al offcanvas abierto.
    ========================================================= */
 
+/* 1) Índice móvil: quitar subrayado y mantener estilo limpio */
+@media (max-width: 767.98px){
+  #tocOffcanvas .offcanvas-body a{
+    text-decoration: none;              /* sin subrayado por defecto */
+    color: var(--primary-dark-blue);
+    font-weight: 500;
+  }
+  #tocOffcanvas .offcanvas-body a:hover,
+  #tocOffcanvas .offcanvas-body a:focus{
+    text-decoration: underline;         /* feedback al interactuar */
+    outline: none;
+  }
+}
 
-/* =========================================================
-   FIN DEL CSS (por ahora)
-   ========================================================= */
+/* 2) Links de Interés dentro del offcanvas:
+      forzar apariencia de botón (colores, bordes, ancho) */
+@media (max-width: 767.98px){
+  #tocOffcanvas .offcanvas-body .btn,
+  #tocOffcanvas .offcanvas-body a.btn,
+  #tocOffcanvas .offcanvas-body .chip a.btn{
+    display: block;
+    width: 100%;
+    background: var(--secondary-blue) !important;
+    border-color: var(--secondary-blue) !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: 600;
+  }
+  #tocOffcanvas .offcanvas-body .btn:hover,
+  #tocOffcanvas .offcanvas-body .btn:focus{
+    background: var(--primary-dark-blue) !important;
+    border-color: var(--primary-dark-blue) !important;
+    text-decoration: none;
+  }
+
+  /* Espaciado vertical prolijo entre botones */
+  #tocOffcanvas .offcanvas-body .row .col + .col,
+  #tocOffcanvas .offcanvas-body .chip + .chip{
+    margin-top: 10px;
+  }
+}
+
+/* 3) Evitar superposición: ocultar el botón flotante cuando el offcanvas está abierto */
+.offcanvas.show ~ .floating-toc-btn{
+  display: none !important;
+}
+
+/* (opcional) Margen inferior extra dentro del offcanvas para evitar que
+   el último botón quede pegado al borde inferior del panel */
+@media (max-width: 767.98px){
+  #tocOffcanvas .offcanvas-body{
+    padding-bottom: 16px;
+  }
+}
